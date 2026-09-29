@@ -69,7 +69,7 @@
         </div>
     </div>
 
-    <main class="wrap">
+    <main class="wrap" id="page-home" data-for="home">
         <!-- ===== Latest news ===== -->
         <section>
             <div class="section-head">
@@ -149,6 +149,37 @@
         </aside>
     </main>
 
+    <!-- ===== For You (members only) ===== -->
+    <section class="wrap foryou" id="page-foryou" data-for="foryou" hidden>
+        <nav class="fy-tabs" role="tablist">
+            <button role="tab" class="on" data-tab="feed">My Feed</button>
+            <button role="tab" data-tab="saved">Saved News</button>
+            <button role="tab" data-tab="reported">Reported Cases</button>
+        </nav>
+
+        <div class="fy-empty" data-panel="feed">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 5a1 1 0 011-1h13a1 1 0 011 1v14a1 1 0 01-1 1H5a2 2 0 01-2-2V5zm3 2v4h5V7H6zm7 0v1.5h3V7h-3zm0 2.5V11h3V9.5h-3zM6 13v1.5h10V13H6zm0 3v1.5h10V16H6z" />
+                <path d="M19 8h1a1 1 0 011 1v9a2 2 0 01-2 2V8z" />
+            </svg>
+            <button class="fy-cta" data-auth="signup">Sign Up and Discover New Topics</button>
+        </div>
+
+        <div class="fy-empty" data-panel="saved" hidden>
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 2h12a1 1 0 011 1v19l-7-4.5L5 22V3a1 1 0 011-1z" />
+            </svg>
+            <button class="fy-cta" data-auth="signup">Sign Up to Save Fact Checks</button>
+        </div>
+
+        <div class="fy-empty" data-panel="reported" hidden>
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M5 2a1 1 0 011 1v1h13l-2.5 5L19 14H6v7a1 1 0 11-2 0V3a1 1 0 011-1z" />
+            </svg>
+            <button class="fy-cta" data-auth="signup">Sign Up to Track Your Reports</button>
+        </div>
+    </section>
+
     <footer>
         <div class="wrap">
             <span>© 2023 - Malaysian Communications and Multimedia Commission — Verify before you share.</span>
@@ -164,7 +195,11 @@
     <dialog class="modal" id="login-required" aria-labelledby="login-required-title">
         <button class="modal-close" data-close aria-label="Close">&times;</button>
         <div class="modal-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="5" y="11" width="14" height="10" rx="2" />
+                <path d="M8 11V7a4 4 0 018 0v4" />
+            </svg>
         </div>
         <h3 id="login-required-title">Login required</h3>
         <p>You need to register and log in to the system first.</p>
@@ -248,13 +283,37 @@
             render();
         }));
 
+        function showPage(page) {
+            document.querySelectorAll(".links a").forEach(a =>
+                a.classList.toggle("active", a.dataset.page === page));
+            document.querySelectorAll("[data-for]").forEach(el =>
+                el.hidden = el.dataset.for !== page);
+            window.scrollTo(0, 0);
+        }
+
         document.querySelectorAll(".links a").forEach(a => a.addEventListener("click", e => {
             e.preventDefault();
-            document.querySelector(".links .active").classList.remove("active");
-            a.classList.add("active");
+            showPage(a.dataset.page);
+        }));
+        document.querySelector(".logo").addEventListener("click", e => {
+            e.preventDefault();
+            showPage("home");
+        });
+
+        q.addEventListener("input", () => {
+            if (document.getElementById("page-home").hidden) showPage("home");
+            render();
+        });
+
+        document.querySelectorAll(".fy-tabs button").forEach(tab => tab.addEventListener("click", () => {
+            document.querySelectorAll(".fy-tabs button").forEach(t => t.classList.toggle("on", t === tab));
+            document.querySelectorAll(".fy-empty").forEach(p => p.hidden = p.dataset.panel !== tab.dataset.tab);
         }));
 
-        q.addEventListener("input", render);
+        // Placeholder until the sign-up / login pages exist
+        document.querySelectorAll("[data-auth]").forEach(b => b.addEventListener("click", () => {
+            console.log("TODO: go to", b.dataset.auth, "page");
+        }));
 
         // No auth yet — flip this once login is wired up
         let loggedIn = false;
