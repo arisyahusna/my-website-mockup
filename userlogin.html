@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Log in — sebenarnya.my</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/webp" href="image/icon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="auth-body">
+
+    <header class="auth-top">
+        <div class="wrap">
+            <a href="index.html" class="logo" aria-label="sebenarnya.my home">
+                <img src="image/logo.png" alt="sebenarnya.my — Tidak Pasti Jangan Kongsi" class="logo-img">
+            </a>
+            <a href="index.html" class="auth-back">Home</a>
+        </div>
+    </header>
+
+    <main class="auth">
+        <div class="auth-card">
+            <aside class="auth-brand">
+                <img src="image/icon.png" alt="" class="auth-brand-icon">
+                <h2>Tidak pasti, jangan kongsi.</h2>
+                <p>Log in to pick up where you left off.</p>
+                <ul>
+                    <li>Your personalised fact-check feed</li>
+                    <li>Saved news in one place</li>
+                    <li>Submit and track reported claims</li>
+                </ul>
+            </aside>
+
+            <section class="auth-form-wrap">
+                <h1>Log in</h1>
+                <p class="auth-sub">Welcome back. Enter your details to continue.</p>
+
+                <div class="auth-alert success" id="registered" hidden>
+                    Account created. You can log in now.
+                </div>
+                <div class="auth-alert error" id="form-error" role="alert" hidden></div>
+
+                <form id="login-form" novalidate>
+                    <div class="field">
+                        <label for="email">Email</label>
+                        <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com"
+                            required>
+                        <small class="field-error" id="email-error"></small>
+                    </div>
+
+                    <div class="field">
+                        <label for="password">Password</label>
+                        <div class="pw-wrap">
+                            <input id="password" name="password" type="password" autocomplete="current-password"
+                                placeholder="Enter your password" required>
+                            <button type="button" class="pw-toggle" aria-label="Show password">Show</button>
+                        </div>
+                        <small class="field-error" id="password-error"></small>
+                    </div>
+
+                    <button type="submit" class="auth-submit">Log in</button>
+                </form>
+
+                <p class="auth-switch">Don't have an account? <a href="userregister.html">Register</a></p>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const form = document.getElementById("login-form");
+        const email = document.getElementById("email");
+        const password = document.getElementById("password");
+        const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // Coming from the register page: show a confirmation and prefill the email
+        const params = new URLSearchParams(location.search);
+        if (params.has("registered")) document.getElementById("registered").hidden = false;
+        if (params.get("email")) email.value = params.get("email");
+
+        function setError(input, msg) {
+            document.getElementById(input.id + "-error").textContent = msg;
+            input.classList.toggle("invalid", !!msg);
+            return !msg;
+        }
+
+        function validate() {
+            const okEmail = setError(email,
+                !email.value.trim() ? "Email is required." :
+                    !EMAIL_RE.test(email.value.trim()) ? "Enter a valid email address." : "");
+            const okPassword = setError(password, password.value ? "" : "Password is required.");
+            return okEmail && okPassword;
+        }
+
+        document.querySelector(".pw-toggle").addEventListener("click", e => {
+            const show = password.type === "password";
+            password.type = show ? "text" : "password";
+            e.target.textContent = show ? "Hide" : "Show";
+            e.target.setAttribute("aria-label", show ? "Hide password" : "Show password");
+        });
+
+        [email, password].forEach(i => i.addEventListener("input", () => {
+            if (i.classList.contains("invalid")) validate();
+        }));
+
+        form.addEventListener("submit", e => {
+            e.preventDefault();
+            document.getElementById("form-error").hidden = true;
+            if (!validate()) return;
+
+            // TODO: send { email, password } to the backend and handle a wrong-password response
+            // by showing it in #form-error. No database yet, so any valid input "logs in".
+            const btn = form.querySelector(".auth-submit");
+            btn.disabled = true;
+            btn.textContent = "Logging in…";
+            // Stand-in for a real session: remember who logged in so userhome.html can greet them
+            try { localStorage.setItem("sbn-user", email.value.trim()); } catch (err) { }
+            setTimeout(() => location.href = "userhome.html", 600);
+        });
+    </script>
+</body>
+
+</html>

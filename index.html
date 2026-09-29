@@ -4,13 +4,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>sebenarnya.my — Fact Check</title>
+    <title>SEBENARNYA.MY</title>
     <!-- ground.news uses licensed Universal Sans / Söhne; Inter Tight + Inter are the closest free equivalents -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet">
+    <link rel="icon" type="image/webp" href="image/icon.png">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -18,27 +19,27 @@
 
     <div class="strip">
         <div class="wrap">
-            <div class="ticker"><span>BREAKING</span>Claim of nationwide water disruption this weekend is false —
-                verified with state operators</div>
-            <div class="date"><b id="today"></b></div>
+            <div class="ticker">Bukan semua benar di internet. <span>Tidak</span>pasti?
+                <span>Jangan</span>kongsi.
+            </div>
+            <div class="strip-right">
+                <a href="extension.html">
+                    <span>Browser extension</span>
+                </a>
+                <div class="date"><b id="today"></b></div>
+            </div>
         </div>
     </div>
 
     <header>
         <div class="wrap nav">
-            <a href="#" class="logo" aria-label="sebenarnya.my home">
-                <span class="logo-mark">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M5 12.5l4.5 4.5L19 7.5" />
-                    </svg>
-                </span>
-                <span>se<span class="tld">benar</span>nya.my</span>
+            <a href="#home" class="logo" aria-label="sebenarnya.my home">
+                <img src="image/logo.png" alt="sebenarnya.my — Tidak Pasti Jangan Kongsi" class="logo-img">
             </a>
 
             <nav class="links" aria-label="Primary">
-                <a href="#" class="active" data-page="home">Home</a>
-                <a href="#" data-page="foryou">For You</a>
+                <a href="#home" class="active" data-page="home">Home</a>
+                <a href="#foryou" data-page="foryou">For You</a>
             </nav>
 
             <label class="search">
@@ -49,7 +50,7 @@
                 <input id="q" type="search" placeholder="Search a claim, topic or link…" autocomplete="off">
             </label>
 
-            <button class="btn-login">Log in</button>
+            <a href="userlogin.html" class="btn-login">Log in</a>
         </div>
     </header>
 
@@ -77,29 +78,7 @@
                 <a href="#" class="more">View all →</a>
             </div>
 
-            <article class="hero">
-                <a href="#" class="hero-img">
-                    <img src="https://picsum.photos/seed/sbn-hero/900/640" alt="">
-                    <span class="tag">Top Story</span>
-                </a>
-                <div class="hero-body">
-                    <span class="verdict v-false">False</span>
-                    <h3><a href="#">Viral WhatsApp message offering RM500 "digital aid" is a phishing scam</a></h3>
-                    <div class="claim">
-                        <b>The claim</b>
-                        Recipients can claim RM500 by clicking a link and entering their IC number and bank details.
-                    </div>
-                    <p>No agency has announced such a programme. The link leads to a lookalike site built to harvest
-                        banking credentials, and has been reported to the authorities.</p>
-                    <div class="consensus">
-                        <div class="consensus-bar"><i class="f" style="width:92%"></i><i class="m"
-                                style="width:6%"></i><i class="t" style="width:2%"></i></div>
-                        <div class="consensus-label">24 sources checked · 92% rate this false</div>
-                    </div>
-                    <div class="meta"><span>Scams</span><span class="dot"></span><span>18 min ago</span><span
-                            class="dot"></span><span>3 min read</span></div>
-                </div>
-            </article>
+            <div id="hero"></div>
 
             <div class="filters" role="tablist">
                 <button class="on" data-f="all">All</button>
@@ -144,7 +123,26 @@
             <div class="report">
                 <h3>Seen something suspicious?</h3>
                 <p>Send us a claim, screenshot or link and our team will verify it.</p>
-                <button id="submit-claim">Submit a claim</button>
+                <button data-report>Submit a claim</button>
+            </div>
+        </aside>
+    </main>
+
+    <!-- ===== Article ===== -->
+    <main class="wrap" data-for="article" hidden>
+        <article class="article" id="article"></article>
+
+        <aside>
+            <div class="panel">
+                <h2>More fact checks</h2>
+                <div class="sub">Latest from our team</div>
+                <ol class="hot-list" id="more-list"></ol>
+            </div>
+
+            <div class="report">
+                <h3>Seen a similar claim?</h3>
+                <p>Send it to us and we'll let you know what we find.</p>
+                <button data-report>Submit a claim</button>
             </div>
         </aside>
     </main>
@@ -159,7 +157,8 @@
 
         <div class="fy-empty" data-panel="feed">
             <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3 5a1 1 0 011-1h13a1 1 0 011 1v14a1 1 0 01-1 1H5a2 2 0 01-2-2V5zm3 2v4h5V7H6zm7 0v1.5h3V7h-3zm0 2.5V11h3V9.5h-3zM6 13v1.5h10V13H6zm0 3v1.5h10V16H6z" />
+                <path
+                    d="M3 5a1 1 0 011-1h13a1 1 0 011 1v14a1 1 0 01-1 1H5a2 2 0 01-2-2V5zm3 2v4h5V7H6zm7 0v1.5h3V7h-3zm0 2.5V11h3V9.5h-3zM6 13v1.5h10V13H6zm0 3v1.5h10V16H6z" />
                 <path d="M19 8h1a1 1 0 011 1v9a2 2 0 01-2 2V8z" />
             </svg>
             <button class="fy-cta" data-auth="signup">Sign Up and Discover New Topics</button>
@@ -183,12 +182,6 @@
     <footer>
         <div class="wrap">
             <span>© 2023 - Malaysian Communications and Multimedia Commission — Verify before you share.</span>
-            <nav>
-                <a href="#">About</a>
-                <a href="#">Methodology</a>
-                <a href="#">Contact</a>
-                <a href="#">Privacy</a>
-            </nav>
         </div>
     </footer>
 
@@ -204,77 +197,27 @@
         <h3 id="login-required-title">Login required</h3>
         <p>You need to register and log in to the system first.</p>
         <div class="modal-actions">
-            <button class="btn-secondary" data-close>Register</button>
-            <button class="btn-primary" data-close>Log in</button>
+            <button class="btn-secondary" data-auth="signup">Register</button>
+            <button class="btn-primary" data-auth="login">Log in</button>
         </div>
     </dialog>
 
+    <script src="articles.js"></script>
     <script>
-        const LABEL = { false: "False", mislead: "Misleading", true: "True" };
-
-        // Sample content — replace with real data from your CMS/API
-        const stories = [
-            { v: "false", title: "Photo of flooded highway is from 2021, not this week's storm", cat: "Disasters", ago: "42 min ago", img: "flood", split: [88, 10, 2], n: 17 },
-            { v: "mislead", title: "Claim that petrol prices will double next month leaves out key context", cat: "Economy", ago: "1 hr ago", img: "fuel", split: [20, 70, 10], n: 21 },
-            { v: "true", title: "Yes, the new school term starts one week earlier in some states", cat: "Education", ago: "2 hr ago", img: "school", split: [3, 7, 90], n: 12 },
-            { v: "false", title: "AI-generated video of minister announcing public holiday is fake", cat: "Technology", ago: "3 hr ago", img: "deepfake", split: [95, 5, 0], n: 30 },
-            { v: "mislead", title: "Post linking common vitamin to cancer cure misreads a lab study", cat: "Health", ago: "4 hr ago", img: "vitamin", split: [35, 60, 5], n: 14 },
-            { v: "false", title: "No, toll-free travel during festive season has not been extended", cat: "Transport", ago: "5 hr ago", img: "toll", split: [80, 15, 5], n: 9 },
-            { v: "true", title: "Haze readings in parts of the peninsula did reach unhealthy levels", cat: "Environment", ago: "6 hr ago", img: "haze", split: [2, 8, 90], n: 19 },
-            { v: "false", title: "Viral 'new bank charge' notice circulating on Telegram is fabricated", cat: "Scams", ago: "7 hr ago", img: "bank", split: [90, 8, 2], n: 11 },
-            { v: "mislead", title: "Chart on rising rice prices uses a cherry-picked time range", cat: "Economy", ago: "8 hr ago", img: "rice", split: [15, 75, 10], n: 8 },
-        ];
-
-        const hot = [
-            { v: "false", title: "RM500 digital aid WhatsApp link", searches: "48.2k", up: "+312%" },
-            { v: "false", title: "Nationwide water disruption this weekend", searches: "31.7k", up: "+204%" },
-            { v: "mislead", title: "Petrol price to double next month", searches: "22.9k", up: "+118%" },
-            { v: "false", title: "Minister public holiday video", searches: "18.4k", up: "+96%" },
-            { v: "true", title: "School term starting earlier", searches: "12.1k", up: "+64%" },
-            { v: "mislead", title: "Vitamin cures cancer study", searches: "9.8k", up: "+41%" },
-            { v: "false", title: "New bank charge notice on Telegram", searches: "7.3k", up: "+28%" },
-        ];
-
-        const grid = document.getElementById("grid");
-        const q = document.getElementById("q");
+        const $ = id => document.getElementById(id);
+        const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        const q = $("q");
         let filter = "all";
-
-        function card(s) {
-            const [f, m, t] = s.split;
-            const pct = s.v === "false" ? f : s.v === "mislead" ? m : t;
-            return `
-        <a href="#" class="card">
-          <div class="card-img"><img loading="lazy" src="https://picsum.photos/seed/sbn-${s.img}/600/375" alt=""></div>
-          <span class="verdict v-${s.v}">${LABEL[s.v]}</span>
-          <h4>${s.title}</h4>
-          <div class="meta"><span>${s.cat}</span><span class="dot"></span><span>${s.ago}</span></div>
-          <div class="consensus">
-            <div class="consensus-bar"><i class="f" style="width:${f}%"></i><i class="m" style="width:${m}%"></i><i class="t" style="width:${t}%"></i></div>
-            <div class="consensus-label">${s.n} sources · ${pct}% agree</div>
-          </div>
-        </a>`;
-        }
 
         function render() {
             const term = q.value.trim().toLowerCase();
-            const list = stories.filter(s =>
+            const list = stories.filter(s => s.id !== HERO_ID &&
                 (filter === "all" || s.v === filter) &&
-                (!term || (s.title + " " + s.cat).toLowerCase().includes(term))
-            );
-            grid.innerHTML = list.length
+                (!term || (s.title + " " + s.cat + " " + s.claim).toLowerCase().includes(term)));
+            $("grid").innerHTML = list.length
                 ? list.map(card).join("")
-                : `<div class="empty">No fact checks match “${q.value}”.</div>`;
+                : `<div class="empty">No fact checks match “${esc(q.value)}”.</div>`;
         }
-
-        document.getElementById("hot").innerHTML = hot.map(h => `
-      <li><a href="#">
-        <h5>${h.title}</h5>
-        <div class="hot-meta">
-          <span class="verdict v-${h.v}">${LABEL[h.v]}</span>
-          <span>${h.searches} searches</span>
-          <span class="trend">▲ ${h.up}</span>
-        </div>
-      </a></li>`).join("");
 
         document.querySelectorAll(".filters button").forEach(b => b.addEventListener("click", () => {
             document.querySelector(".filters .on").classList.remove("on");
@@ -283,25 +226,8 @@
             render();
         }));
 
-        function showPage(page) {
-            document.querySelectorAll(".links a").forEach(a =>
-                a.classList.toggle("active", a.dataset.page === page));
-            document.querySelectorAll("[data-for]").forEach(el =>
-                el.hidden = el.dataset.for !== page);
-            window.scrollTo(0, 0);
-        }
-
-        document.querySelectorAll(".links a").forEach(a => a.addEventListener("click", e => {
-            e.preventDefault();
-            showPage(a.dataset.page);
-        }));
-        document.querySelector(".logo").addEventListener("click", e => {
-            e.preventDefault();
-            showPage("home");
-        });
-
         q.addEventListener("input", () => {
-            if (document.getElementById("page-home").hidden) showPage("home");
+            if (location.hash && location.hash !== "#home") location.hash = "#home";
             render();
         });
 
@@ -310,29 +236,51 @@
             document.querySelectorAll(".fy-empty").forEach(p => p.hidden = p.dataset.panel !== tab.dataset.tab);
         }));
 
-        // Placeholder until the sign-up / login pages exist
+        const AUTH_PAGES = { signup: "userregister.html", login: "userlogin.html" };
         document.querySelectorAll("[data-auth]").forEach(b => b.addEventListener("click", () => {
-            console.log("TODO: go to", b.dataset.auth, "page");
+            location.href = AUTH_PAGES[b.dataset.auth];
         }));
 
-        // No auth yet — flip this once login is wired up
-        let loggedIn = false;
-        const loginRequired = document.getElementById("login-required");
-
-        document.getElementById("submit-claim").addEventListener("click", () => {
-            if (!loggedIn) loginRequired.showModal();
+        // Visitors can read and share; saving and reporting need an account
+        const loginRequired = $("login-required");
+        document.addEventListener("click", e => {
+            let el;
+            if ((el = e.target.closest("[data-share]"))) { e.preventDefault(); openShare(el.dataset.share); return; }
+            if (e.target.closest("[data-save], [data-report]")) { e.preventDefault(); loginRequired.showModal(); }
         });
-        loginRequired.querySelectorAll("[data-close]").forEach(b =>
-            b.addEventListener("click", () => loginRequired.close()));
         loginRequired.addEventListener("click", e => {
-            if (e.target === loginRequired) loginRequired.close(); // click on backdrop
+            if (e.target === loginRequired || e.target.closest("[data-close]")) loginRequired.close();
         });
 
-        document.getElementById("today").textContent = new Date().toLocaleDateString("en-MY", {
+        /* ---------- Router: #home, #foryou, #article/<id> ---------- */
+        function route() {
+            let [page, sub] = location.hash.slice(1).split("/");
+            if (!["home", "foryou", "article"].includes(page)) page = "home";
+            if (page === "article" && !byId[sub]) page = "home";
+
+            document.querySelectorAll("[data-for]").forEach(el => el.hidden = el.dataset.for !== page);
+            document.querySelectorAll(".links a").forEach(a => a.classList.toggle("active", a.dataset.page === page));
+
+            if (page === "article") {
+                $("article").innerHTML = articleHTML(byId[sub]);
+                $("more-list").innerHTML = moreList(sub);
+            }
+            window.scrollTo(0, 0);
+        }
+        window.addEventListener("hashchange", route);
+
+        $("today").textContent = new Date().toLocaleDateString("en-MY", {
             weekday: "long", day: "numeric", month: "long", year: "numeric"
         });
 
+        // Arriving from another page (e.g. extension.html) with a search
+        const params = new URLSearchParams(location.search);
+        if (params.get("q")) q.value = params.get("q");
+
+        $("hero").innerHTML = heroHTML(byId[HERO_ID]);
+        $("hot").innerHTML = hotList(hot);
         render();
+        route();
     </script>
 </body>
 

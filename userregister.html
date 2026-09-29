@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register | SEBENARNYA>MY</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/webp" href="image/icon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="auth-body">
+
+    <header class="auth-top">
+        <div class="wrap">
+            <a href="index.html" class="logo" aria-label="sebenarnya.my home">
+                <img src="image/logo.png" alt="sebenarnya.my — Tidak Pasti Jangan Kongsi" class="logo-img">
+            </a>
+            <a href="index.html" class="auth-back">Home</a>
+        </div>
+    </header>
+
+    <main class="auth">
+        <div class="auth-card">
+            <aside class="auth-brand">
+                <img src="image/icon.png" alt="" class="auth-brand-icon">
+                <h2>Tidak pasti, jangan kongsi.</h2>
+                <p>Create a free account to get more out of sebenarnya.my.</p>
+                <ul>
+                    <li>Follow topics for a personalised feed</li>
+                    <li>Save fact checks to read later</li>
+                    <li>Report suspicious claims and track them</li>
+                </ul>
+            </aside>
+
+            <section class="auth-form-wrap">
+                <h1>Create an account</h1>
+                <p class="auth-sub">It's free and takes less than a minute.</p>
+
+                <div class="auth-alert error" id="form-error" role="alert" hidden></div>
+
+                <form id="register-form" novalidate>
+                    <div class="field">
+                        <label for="email">Email</label>
+                        <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com"
+                            required>
+                        <small class="field-error" id="email-error"></small>
+                    </div>
+
+                    <div class="field">
+                        <label for="password">Password</label>
+                        <div class="pw-wrap">
+                            <input id="password" name="password" type="password" autocomplete="new-password"
+                                placeholder="At least 8 characters" minlength="8" required>
+                            <button type="button" class="pw-toggle" aria-label="Show password">Show</button>
+                        </div>
+                        <div class="pw-meter" aria-hidden="true"><i></i><i></i><i></i></div>
+                        <small class="field-hint" id="pw-hint">Use 8 or more characters with a mix of letters and
+                            numbers.</small>
+                        <small class="field-error" id="password-error"></small>
+                    </div>
+
+                    <button type="submit" class="auth-submit">Register</button>
+                </form>
+
+                <p class="auth-switch">Already have an account? <a href="userlogin.html">Log in</a></p>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const form = document.getElementById("register-form");
+        const email = document.getElementById("email");
+        const password = document.getElementById("password");
+        const meter = document.querySelector(".pw-meter");
+        const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        function setError(input, msg) {
+            document.getElementById(input.id + "-error").textContent = msg;
+            input.classList.toggle("invalid", !!msg);
+            return !msg;
+        }
+
+        function validate() {
+            const okEmail = setError(email,
+                !email.value.trim() ? "Email is required." :
+                    !EMAIL_RE.test(email.value.trim()) ? "Enter a valid email address." : "");
+            const okPassword = setError(password,
+                !password.value ? "Password is required." :
+                    password.value.length < 8 ? "Password must be at least 8 characters." : "");
+            return okEmail && okPassword;
+        }
+
+        // 0–3: length, letters + numbers, and a symbol or 12+ characters
+        function strength(pw) {
+            if (pw.length < 8) return pw ? 1 : 0;
+            let score = 1;
+            if (/[a-z]/i.test(pw) && /\d/.test(pw)) score++;
+            if (/[^a-z0-9]/i.test(pw) || pw.length >= 12) score++;
+            return score;
+        }
+
+        password.addEventListener("input", () => {
+            meter.dataset.level = strength(password.value);
+        });
+
+        document.querySelector(".pw-toggle").addEventListener("click", e => {
+            const show = password.type === "password";
+            password.type = show ? "text" : "password";
+            e.target.textContent = show ? "Hide" : "Show";
+            e.target.setAttribute("aria-label", show ? "Hide password" : "Show password");
+        });
+
+        [email, password].forEach(i => i.addEventListener("input", () => {
+            if (i.classList.contains("invalid")) validate();
+        }));
+
+        form.addEventListener("submit", e => {
+            e.preventDefault();
+            document.getElementById("form-error").hidden = true;
+            if (!validate()) return;
+
+            // TODO: send { email, password } to the backend and handle "email already registered"
+            // by showing it in #form-error. No database yet, so any valid input "registers".
+            const btn = form.querySelector(".auth-submit");
+            btn.disabled = true;
+            btn.textContent = "Creating account…";
+            setTimeout(() => {
+                location.href = "userlogin.html?registered=1&email=" + encodeURIComponent(email.value.trim());
+            }, 600);
+        });
+    </script>
+</body>
+
+</html>

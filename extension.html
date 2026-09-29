@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Browser Extension | SEBENARNYA.MY</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/webp" href="image/icon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="strip">
+        <div class="wrap">
+            <div class="ticker"><span>NEW</span>Fact-check claims on any website with the sebenarnya.my extension</div>
+            <div class="strip-right">
+                <div class="date"><b id="today"></b></div>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="wrap nav">
+            <a href="index.html" class="logo" aria-label="sebenarnya.my home">
+                <img src="image/logo.png" alt="sebenarnya.my — Tidak Pasti Jangan Kongsi" class="logo-img">
+            </a>
+
+            <nav class="links" aria-label="Primary">
+                <a href="index.html">Home</a>
+                <a href="index.html#foryou">For You</a>
+            </nav>
+
+            <form class="search" action="index.html" role="search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M20 20l-3.5-3.5" />
+                </svg>
+                <input name="q" type="search" placeholder="Search a claim, topic or link…" autocomplete="off">
+            </form>
+        </div>
+    </header>
+
+    <main class="ext">
+        <!-- ===== Hero ===== -->
+        <section class="ext-hero">
+            <div class="wrap ext-hero-grid">
+                <div>
+                    <span class="eyebrow">Browser extension</span>
+                    <h1>Fact-check anything, right where you read it</h1>
+                    <p class="lede">The sebenarnya.my extension flags claims that have already been fact-checked, so you
+                        can spot fake news before you share it — on news sites, Facebook, X, YouTube and more.</p>
+                    <div class="ext-actions">
+                        <a href="#browsers" class="ext-install" id="install-main">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14" />
+                            </svg>
+                            <span id="install-label">Add to your browser</span>
+                        </a>
+                        <span class="ext-note">Free · No account needed to browse</span>
+                    </div>
+                </div>
+
+                <!-- Illustration: the extension in action -->
+                <div class="mock" aria-hidden="true">
+                    <div class="mock-bar">
+                        <i></i><i></i><i></i>
+                        <div class="mock-url">news-portal.example/viral-rm500-aid</div>
+                        <div class="mock-ext-icon">
+                            <img src="image/icon.png" alt="">
+                            <b>1</b>
+                        </div>
+                    </div>
+                    <div class="mock-page">
+                        <div class="mock-line w60 thick"></div>
+                        <div class="mock-line w40"></div>
+                        <div class="mock-img"></div>
+                        <p class="mock-text">Many are sharing a message that says <mark>everyone can claim RM500 in
+                                digital aid by clicking this link</mark> before the end of the month.</p>
+                        <div class="mock-line"></div>
+                        <div class="mock-line w80"></div>
+                    </div>
+                    <div class="mock-pop">
+                        <div class="mock-pop-head">
+                            <img src="image/icon.png" alt="" class="pop-icon">
+                            <b>sebenarnya.my</b>
+                        </div>
+                        <span class="verdict v-false">False</span>
+                        <h4>RM500 "digital aid" link is a phishing scam</h4>
+                        <div class="consensus">
+                            <div class="consensus-bar"><i class="f" style="width:92%"></i><i class="m"
+                                    style="width:6%"></i><i class="t" style="width:2%"></i></div>
+                            <div class="consensus-label">24 sources · 92% rate this false</div>
+                        </div>
+                        <span class="mock-link">Read the full fact check →</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== How it works ===== -->
+        <section class="wrap ext-section">
+            <div class="ext-head">
+                <h2>How it works</h2>
+                <p>Set it up once, then keep browsing like you always do.</p>
+            </div>
+            <ol class="steps">
+                <li>
+                    <h3>Install the extension</h3>
+                    <p>Add sebenarnya.my to your browser in one click from the official store below.</p>
+                </li>
+                <li>
+                    <h3>Browse as usual</h3>
+                    <p>Read the news and scroll your feeds. The extension quietly checks claims on the page.</p>
+                </li>
+                <li>
+                    <h3>See the verdict instantly</h3>
+                    <p>Checked claims are highlighted. Hover to see if they're true, false or misleading.</p>
+                </li>
+            </ol>
+        </section>
+
+        <!-- ===== Features ===== -->
+        <section class="wrap ext-section">
+            <div class="ext-head">
+                <h2>What you get</h2>
+            </div>
+            <div class="features">
+                <div class="feature">
+                    <span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z" />
+                            <path d="M9 12l2 2 4-4" />
+                        </svg></span>
+                    <h3>Instant claim alerts</h3>
+                    <p>Claims already checked by our team are highlighted on the page as you read.</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="7" />
+                            <path d="M20 20l-3.5-3.5" />
+                        </svg></span>
+                    <h3>Right-click to check</h3>
+                    <p>Select any text, right-click and search sebenarnya.my without leaving the page.</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 21V4M5 4h11l-2 4 2 4H5" />
+                        </svg></span>
+                    <h3>Report in one click</h3>
+                    <p>Spotted something suspicious? Send it to our team for verification straight from the page.</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="5" y="11" width="14" height="10" rx="2" />
+                            <path d="M8 11V7a4 4 0 018 0v4" />
+                        </svg></span>
+                    <h3>Private by design</h3>
+                    <p>We never sell your data or track the pages you visit. Checks run against our public database.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Browsers ===== -->
+        <section class="wrap ext-section" id="browsers">
+            <div class="ext-head">
+                <h2>Choose your browser</h2>
+                <p>Available free on all major desktop browsers.</p>
+            </div>
+            <div class="browsers">
+                <!-- TODO: replace # with the real store listing URLs once the extension is published -->
+                <div class="browser" data-browser="chrome">
+                    <span class="browser-mark">C</span>
+                    <h3>Chrome</h3>
+                    <a href="#" class="browser-btn">Add to Chrome</a>
+                </div>
+                <div class="browser" data-browser="edge">
+                    <span class="browser-mark">E</span>
+                    <h3>Edge</h3>
+                    <a href="#" class="browser-btn">Add to Edge</a>
+                </div>
+                <div class="browser" data-browser="firefox">
+                    <span class="browser-mark">F</span>
+                    <h3>Firefox</h3>
+                    <a href="#" class="browser-btn">Add to Firefox</a>
+                </div>
+                <div class="browser" data-browser="safari">
+                    <span class="browser-mark">S</span>
+                    <h3>Safari</h3>
+                    <a href="#" class="browser-btn">Add to Safari</a>
+                </div>
+            </div>
+        </section>
+
+
+    </main>
+
+    <footer>
+        <div class="wrap">
+            <span>© 2023 - Malaysian Communications and Multimedia Commission — Verify before you share.</span>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById("today").textContent = new Date().toLocaleDateString("en-MY", {
+            weekday: "long", day: "numeric", month: "long", year: "numeric"
+        });
+
+        // Point the main button at the visitor's own browser (Edge must be checked before Chrome)
+        const ua = navigator.userAgent;
+        const detected =
+            /Edg\//.test(ua) ? "edge" :
+                /Firefox\//.test(ua) ? "firefox" :
+                    /Chrome\//.test(ua) ? "chrome" :
+                        /Safari\//.test(ua) ? "safari" : null;
+
+        if (detected) {
+            const card = document.querySelector(`[data-browser="${detected}"]`);
+            card.classList.add("detected");
+            document.getElementById("install-label").textContent =
+                card.querySelector(".browser-btn").textContent + " — it's free";
+            const storeUrl = card.querySelector(".browser-btn").getAttribute("href");
+            if (storeUrl !== "#") document.getElementById("install-main").href = storeUrl;
+        }
+    </script>
+</body>
+
+</html>
