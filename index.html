@@ -50,7 +50,7 @@
                 <input id="q" type="search" placeholder="Cari dakwaan, topik atau pautan…" autocomplete="off">
             </label>
 
-            <a href="userlogin.html" class="btn-login">Log masuk</a>
+            <a href="general-public/userlogin.html" class="btn-login">Log masuk</a>
         </div>
     </header>
 
@@ -238,7 +238,7 @@
             document.querySelectorAll(".fy-empty").forEach(p => p.hidden = p.dataset.panel !== tab.dataset.tab);
         }));
 
-        const AUTH_PAGES = { signup: "userregister.html", login: "userlogin.html" };
+        const AUTH_PAGES = { signup: "general-public/userregister.html", login: "general-public/userlogin.html" };
         document.querySelectorAll("[data-auth]").forEach(b => b.addEventListener("click", () => {
             location.href = AUTH_PAGES[b.dataset.auth];
         }));

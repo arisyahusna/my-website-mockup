@@ -137,8 +137,8 @@
         <h3 id="login-required-title">Log masuk diperlukan</h3>
         <p>Anda perlu mendaftar dan log masuk ke sistem terlebih dahulu.</p>
         <div class="modal-actions">
-            <a href="userregister.html" class="btn-secondary">Daftar</a>
-            <a href="userlogin.html" class="btn-primary">Log masuk</a>
+            <a href="general-public/userregister.html" class="btn-secondary">Daftar</a>
+            <a href="general-public/userlogin.html" class="btn-primary">Log masuk</a>
         </div>
     </dialog>
 
@@ -152,15 +152,15 @@
         let userEmail = "";
         try { userEmail = localStorage.getItem("sbn-user") || ""; } catch (e) { }
         const member = !!userEmail || new URLSearchParams(location.search).get("from") === "userhome";
-        const HOME = member ? "userhome.html" : "index.html";
+        const HOME = member ? "general-public/userhome.html" : "index.html";
 
         document.querySelectorAll("[data-home]").forEach(a => a.href = HOME + (a.dataset.home || ""));
         $("account-slot").innerHTML = member
-            ? `<a href="userhome.html" class="avatar" aria-label="Akaun saya" title="Akaun saya">${esc((userEmail || "D")[0].toUpperCase())}</a>`
-            : `<a href="userlogin.html" class="btn-login">Log masuk</a>`;
+            ? `<a href="general-public/userhome.html" class="avatar" aria-label="Akaun saya" title="Akaun saya">${esc((userEmail || "D")[0].toUpperCase())}</a>`
+            : `<a href="general-public/userlogin.html" class="btn-login">Log masuk</a>`;
 
         /* ---------- Saving (members share the saved list with userhome.html) ---------- */
-        const STORE_KEY = "sbn-state-ms";
+        const STORE_KEY = "sbn-state-ms2";
         let state = null;
         try { state = JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) { }
         if (member) {

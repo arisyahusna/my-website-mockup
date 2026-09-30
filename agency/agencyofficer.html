@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ms">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Agency Officer | SEBENARNYA.MY</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/webp" href="../image/icon.png">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../admin.css">
+</head>
+
+<body class="admin-body">
+    <div class="adm">
+        <!-- ===== Sidebar ===== -->
+        <aside class="adm-side">
+            <div class="adm-brand">
+                <img src="../image/icon.png" alt="">
+                <div>
+                    <b>Portal Agensi</b>
+                    <small id="brand-agency"></small>
+                </div>
+            </div>
+
+            <nav class="adm-nav" aria-label="Navigasi pegawai agensi">
+                <a href="#cases" data-view="cases">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M4 4h16v16H4z" />
+                        <path d="M4 9h16M9 9v11" />
+                    </svg>
+                    Kes agensi
+                    <span class="nav-badge" id="nav-cases" title="Kes baharu atau perlu pindaan"></span>
+                </a>
+                <a href="#activity" data-view="activity">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M12 8v4l3 2" />
+                        <circle cx="12" cy="12" r="9" />
+                    </svg>
+                    Log aktiviti
+                </a>
+            </nav>
+
+            <div class="adm-side-foot">
+                <div class="adm-user">
+                    <span class="avatar" id="me-avatar"></span>
+                    <div>
+                        <b>Agency Officer</b>
+                        <span id="me-email"></span>
+                    </div>
+                </div>
+                <a href="agencyreviewer.html" class="side-link">Buka Agency Reviewer ↗</a>
+                <button id="reset-demo" title="Kembalikan semua kes demo kepada keadaan asal">Tetapkan semula demo</button>
+                <button id="logout" class="logout">Log keluar</button>
+            </div>
+        </aside>
+
+        <!-- ===== Main ===== -->
+        <div class="adm-main">
+            <header class="adm-top">
+                <div>
+                    <div class="crumb" id="crumb">Agency Officer</div>
+                    <h1 id="page-title">Kes agensi</h1>
+                </div>
+                <span class="spacer" style="flex:1"></span>
+                <label class="agency-switch">Agensi (demo)
+                    <select id="agency-switch" class="ctl"></select>
+                </label>
+                <div class="bell-wrap">
+                    <button class="bell" id="bell" aria-label="Notifikasi">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.7 21a2 2 0 01-3.4 0" />
+                        </svg>
+                        <span class="bell-count" id="bell-count"></span>
+                    </button>
+                    <div class="bell-panel" id="bell-panel" hidden></div>
+                </div>
+                <label class="search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="M20 20l-3.5-3.5" />
+                    </svg>
+                    <input id="global-q" type="search" placeholder="Cari ID kes atau dakwaan…" autocomplete="off">
+                </label>
+            </header>
+
+            <main class="adm-content">
+                <section class="adm-view" id="view-cases" data-view="cases"></section>
+                <section class="adm-view" id="view-case" data-view="case" hidden></section>
+                <section class="adm-view" id="view-activity" data-view="activity" hidden></section>
+            </main>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="../cases.js"></script>
+    <script src="../mcmc/staff.js"></script>
+    <script src="agency.js"></script>
+    <script src="agencyofficer.js"></script>
+</body>
+
+</html>

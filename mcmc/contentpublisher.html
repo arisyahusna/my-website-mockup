@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ms">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MCMC Content Publisher | SEBENARNYA.MY</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/webp" href="../image/icon.png">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../admin.css">
+</head>
+
+<body class="admin-body">
+    <div class="adm">
+        <!-- ===== Sidebar ===== -->
+        <aside class="adm-side">
+            <div class="adm-brand">
+                <img src="../image/icon.png" alt="">
+                <div>
+                    <b>sebenarnya.my</b>
+                    <small>Portal Content Publisher</small>
+                </div>
+            </div>
+
+            <nav class="adm-nav" aria-label="Navigasi publisher">
+                <a href="#ready" data-view="ready">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M4 20h16" />
+                        <path d="M12 16V4" />
+                        <path d="M7 9l5-5 5 5" />
+                    </svg>
+                    Sedia diterbitkan
+                    <span class="nav-badge" id="nav-ready" title="Kandungan menunggu penerbitan"></span>
+                </a>
+                <a href="#scheduled" data-view="scheduled">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <rect x="3" y="5" width="18" height="16" rx="2" />
+                        <path d="M3 10h18M8 3v4M16 3v4" />
+                    </svg>
+                    Dijadualkan
+                    <span class="nav-badge muted" id="nav-scheduled" title="Penerbitan berjadual"></span>
+                </a>
+                <a href="#published" data-view="published">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                    Diterbitkan
+                </a>
+                <a href="#activity" data-view="activity">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M12 8v4l3 2" />
+                        <circle cx="12" cy="12" r="9" />
+                    </svg>
+                    Log aktiviti
+                </a>
+            </nav>
+
+            <div class="adm-side-foot">
+                <div class="adm-user">
+                    <span class="avatar" id="me-avatar"></span>
+                    <div>
+                        <b>MCMC Content Publisher</b>
+                        <span id="me-email"></span>
+                    </div>
+                </div>
+                <a href="../index.html" class="side-link" target="_blank" rel="noopener">Lihat laman awam ↗</a>
+                <button id="reset-demo" title="Kembalikan semua kes demo kepada keadaan asal">Tetapkan semula demo</button>
+                <button id="logout" class="logout">Log keluar</button>
+            </div>
+        </aside>
+
+        <!-- ===== Main ===== -->
+        <div class="adm-main">
+            <header class="adm-top">
+                <div>
+                    <div class="crumb" id="crumb">MCMC Content Publisher</div>
+                    <h1 id="page-title">Sedia diterbitkan</h1>
+                </div>
+                <label class="search" style="margin-left:auto">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="M20 20l-3.5-3.5" />
+                    </svg>
+                    <input id="global-q" type="search" placeholder="Cari ID kes atau tajuk…" autocomplete="off">
+                </label>
+            </header>
+
+            <main class="adm-content">
+                <section class="adm-view" id="view-ready" data-view="ready"></section>
+                <section class="adm-view" id="view-scheduled" data-view="scheduled" hidden></section>
+                <section class="adm-view" id="view-published" data-view="published" hidden></section>
+                <section class="adm-view" id="view-case" data-view="case" hidden></section>
+                <section class="adm-view" id="view-activity" data-view="activity" hidden></section>
+            </main>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="../cases.js"></script>
+    <script src="staff.js"></script>
+    <script src="contentpublisher.js"></script>
+</body>
+
+</html>

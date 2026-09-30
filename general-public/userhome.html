@@ -10,8 +10,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet">
-    <link rel="icon" type="image/webp" href="image/icon.png">
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/webp" href="../image/icon.png">
+    <link rel="stylesheet" href="../style.css">
 </head>
 
 <body>
@@ -22,7 +22,7 @@
                 <span>Jangan</span>kongsi.
             </div>
             <div class="strip-right">
-                <a href="extension.html">
+                <a href="../extension.html">
                     <span>Sambungan pelayar</span>
                 </a>
                 <div class="date"><b id="today"></b></div>
@@ -33,7 +33,7 @@
     <header>
         <div class="wrap nav">
             <a href="#home" class="logo" aria-label="Laman utama sebenarnya.my">
-                <img src="image/logo.png" alt="sebenarnya.my — Tidak Pasti Jangan Kongsi" class="logo-img">
+                <img src="../image/logo.png" alt="sebenarnya.my — Tidak Pasti Jangan Kongsi" class="logo-img">
             </a>
 
             <nav class="links" aria-label="Navigasi utama">
@@ -116,7 +116,7 @@
         <section>
             <div class="section-head">
                 <h2 id="home-title">Semakan Fakta Terkini</h2>
-                <a href="allarticles.html?from=userhome" class="more">Lihat semua →</a>
+                <a href="../allarticles.html?from=userhome" class="more">Lihat semua →</a>
             </div>
 
             <div id="hero"></div>
@@ -325,14 +325,14 @@
         </div>
     </dialog>
 
-    <script src="articles.js"></script>
+    <script src="../articles.js"></script>
     <script>
         const STATUS = { received: "Diterima", review: "Sedang disemak", published: "Semakan fakta diterbitkan", closed: "Ditutup" };
         const TOPICS = ["Penipuan", "Kesihatan", "Ekonomi", "Politik", "Bencana", "Teknologi", "Pendidikan", "Pengangkutan", "Alam Sekitar", "Agama"];
 
         /* ---------- State (localStorage stands in for the database) ---------- */
         // Key changed when the site moved to Malay, so old English demo data is not reused
-        const STORE_KEY = "sbn-state-ms";
+        const STORE_KEY = "sbn-state-ms2";
         const HOUR = 3600e3;
         const RECEIVED_TEXT = "Kami telah menerima laporan anda dan memasukkannya ke dalam senarai semakan.";
 
@@ -341,15 +341,15 @@
             return {
                 saved: ["deepfake", "vitamin"],
                 follows: ["Penipuan", "Kesihatan", "Ekonomi"],
-                nextCase: 452,
+                nextCase: 47,
                 reports: [
                     {
-                        id: "SBN-2026-0451", claim: "Petua kesihatan yang dikongsi mendakwa air lemon suam boleh mencegah denggi", platform: "WhatsApp", link: "",
+                        id: "SBN-2026-0046", claim: "Petua kesihatan yang dikongsi mendakwa air lemon suam boleh mencegah denggi", platform: "WhatsApp", link: "",
                         at: now - 5 * HOUR, status: "received",
                         updates: [{ s: "received", text: RECEIVED_TEXT, at: now - 5 * HOUR }]
                     },
                     {
-                        id: "SBN-2026-0437", claim: "Video di TikTok mendakwa sebatang jalan runtuh di Kuala Lumpur semalam", platform: "TikTok", link: "",
+                        id: "SBN-2026-0030", claim: "Video di TikTok mendakwa sebatang jalan runtuh di Kuala Lumpur semalam", platform: "TikTok", link: "",
                         at: now - 30 * HOUR, status: "review",
                         updates: [
                             { s: "received", text: RECEIVED_TEXT, at: now - 30 * HOUR },
@@ -357,7 +357,7 @@
                         ]
                     },
                     {
-                        id: "SBN-2026-0412", claim: "Mesej WhatsApp menawarkan bantuan digital RM500 jika saya menekan pautan", platform: "WhatsApp", link: "",
+                        id: "SBN-2026-0012", claim: "Mesej WhatsApp menawarkan bantuan digital RM500 jika saya menekan pautan", platform: "WhatsApp", link: "",
                         at: now - 72 * HOUR, status: "published", article: "rm500",
                         updates: [
                             { s: "received", text: RECEIVED_TEXT, at: now - 72 * HOUR },
@@ -367,9 +367,9 @@
                     }
                 ],
                 notifs: [
-                    { id: 5, type: "report", title: "Laporan anda sedang disemak", body: "SBN-2026-0437 · Video di TikTok mendakwa sebatang jalan runtuh…", link: "foryou/reported", at: now - 2 * HOUR, read: false },
+                    { id: 5, type: "report", title: "Laporan anda sedang disemak", body: "SBN-2026-0030 · Video di TikTok mendakwa sebatang jalan runtuh…", link: "foryou/reported", at: now - 2 * HOUR, read: false },
                     { id: 4, type: "factcheck", title: "Semakan fakta baharu dalam Penipuan", body: "Notis tular 'caj bank baharu' yang tersebar di Telegram adalah rekaan", link: "article/bank", at: now - 7 * HOUR, read: false },
-                    { id: 3, type: "report", title: "Semakan fakta diterbitkan untuk laporan anda", body: "SBN-2026-0412 · Bantuan digital RM500 ialah penipuan pancingan data", link: "article/rm500", at: now - 48 * HOUR, read: false },
+                    { id: 3, type: "report", title: "Semakan fakta diterbitkan untuk laporan anda", body: "SBN-2026-0012 · Bantuan digital RM500 ialah penipuan pancingan data", link: "article/rm500", at: now - 48 * HOUR, read: false },
                     { id: 2, type: "saved", title: "Artikel yang anda simpan telah dikemas kini", body: "Video janaan AI menteri mengumumkan cuti umum adalah palsu", link: "article/deepfake", at: now - 72 * HOUR, read: true },
                     { id: 1, type: "system", title: "Selamat datang ke sebenarnya.my", body: "Ikuti topik untuk memperibadikan suapan anda.", link: "foryou/feed", at: now - 120 * HOUR, read: true }
                 ]

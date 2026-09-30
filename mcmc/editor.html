@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ms">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MCMC Editor | SEBENARNYA.MY</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/webp" href="../image/icon.png">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../admin.css">
+</head>
+
+<body class="admin-body">
+    <div class="adm">
+        <!-- ===== Sidebar ===== -->
+        <aside class="adm-side">
+            <div class="adm-brand">
+                <img src="../image/icon.png" alt="">
+                <div>
+                    <b>sebenarnya.my</b>
+                    <small>Portal MCMC Editor</small>
+                </div>
+            </div>
+
+            <nav class="adm-nav" aria-label="Navigasi editor">
+                <a href="#queue" data-view="queue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z" />
+                    </svg>
+                    Baris gilir
+                    <span class="nav-badge" id="nav-queue" title="Kes menunggu semakan editorial"></span>
+                </a>
+                <a href="#sent" data-view="sent">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M22 2L11 13" />
+                        <path d="M22 2l-7 20-4-9-9-4z" />
+                    </svg>
+                    Telah diserahkan
+                </a>
+                <a href="#activity" data-view="activity">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M12 8v4l3 2" />
+                        <circle cx="12" cy="12" r="9" />
+                    </svg>
+                    Log aktiviti
+                </a>
+            </nav>
+
+            <div class="adm-side-foot">
+                <div class="adm-user">
+                    <span class="avatar" id="me-avatar"></span>
+                    <div>
+                        <b>MCMC Editor</b>
+                        <span id="me-email"></span>
+                    </div>
+                </div>
+                <a href="../index.html" class="side-link" target="_blank" rel="noopener">Lihat laman awam ↗</a>
+                <button id="reset-demo" title="Kembalikan semua kes demo kepada keadaan asal">Tetapkan semula demo</button>
+                <button id="logout" class="logout">Log keluar</button>
+            </div>
+        </aside>
+
+        <!-- ===== Main ===== -->
+        <div class="adm-main">
+            <header class="adm-top">
+                <div>
+                    <div class="crumb" id="crumb">MCMC Editor</div>
+                    <h1 id="page-title">Baris gilir editorial</h1>
+                </div>
+                <label class="search" style="margin-left:auto">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="M20 20l-3.5-3.5" />
+                    </svg>
+                    <input id="global-q" type="search" placeholder="Cari ID kes atau tajuk…" autocomplete="off">
+                </label>
+            </header>
+
+            <main class="adm-content">
+                <section class="adm-view" id="view-queue" data-view="queue"></section>
+                <section class="adm-view" id="view-sent" data-view="sent" hidden></section>
+                <section class="adm-view" id="view-case" data-view="case" hidden></section>
+                <section class="adm-view" id="view-activity" data-view="activity" hidden></section>
+            </main>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="../cases.js"></script>
+    <script src="staff.js"></script>
+    <script src="editor.js"></script>
+</body>
+
+</html>

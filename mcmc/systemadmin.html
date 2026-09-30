@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ms">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MCMC Admin | SEBENARNYA.MY</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/webp" href="../image/icon.png">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../admin.css">
+</head>
+
+<body class="admin-body">
+    <div class="adm">
+        <!-- ===== Sidebar ===== -->
+        <aside class="adm-side">
+            <div class="adm-brand">
+                <img src="../image/icon.png" alt="">
+                <div>
+                    <b>sebenarnya.my</b>
+                    <small>Portal MCMC Admin</small>
+                </div>
+            </div>
+
+            <nav class="adm-nav" aria-label="Navigasi pentadbir">
+                <a href="#dashboard" data-view="dashboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="9" rx="1.5" />
+                        <rect x="14" y="3" width="7" height="5" rx="1.5" />
+                        <rect x="14" y="12" width="7" height="9" rx="1.5" />
+                        <rect x="3" y="16" width="7" height="5" rx="1.5" />
+                    </svg>
+                    Papan pemuka
+                </a>
+                <a href="#cases" data-view="cases">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M4 4h16v16H4z" />
+                        <path d="M4 9h16M9 9v11" />
+                    </svg>
+                    Kes
+                    <span class="nav-badge" id="nav-new" title="Kes memerlukan tindakan anda"></span>
+                </a>
+                <a href="#audit" data-view="audit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M12 8v4l3 2" />
+                        <circle cx="12" cy="12" r="9" />
+                    </svg>
+                    Log audit
+                </a>
+                <a href="#reports" data-view="reports">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z" />
+                        <path d="M14 3v6h6M8 13h8M8 17h5" />
+                    </svg>
+                    Laporan
+                </a>
+            </nav>
+
+            <div class="adm-side-foot">
+                <div class="adm-user">
+                    <span class="avatar" id="me-avatar"></span>
+                    <div>
+                        <b>MCMC Admin</b>
+                        <span id="me-email"></span>
+                    </div>
+                </div>
+                <a href="../index.html" class="side-link" target="_blank" rel="noopener">Lihat laman awam ↗</a>
+                <button id="reset-demo" title="Kembalikan semua kes demo kepada keadaan asal">Tetapkan semula demo</button>
+                <button id="logout" class="logout">Log keluar</button>
+            </div>
+        </aside>
+
+        <!-- ===== Main ===== -->
+        <div class="adm-main">
+            <header class="adm-top">
+                <div>
+                    <div class="crumb" id="crumb">MCMC Admin</div>
+                    <h1 id="page-title">Papan pemuka</h1>
+                </div>
+                <label class="search" style="margin-left:auto">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="M20 20l-3.5-3.5" />
+                    </svg>
+                    <input id="global-q" type="search" placeholder="Cari ID kes atau dakwaan…" autocomplete="off">
+                </label>
+            </header>
+
+            <main class="adm-content">
+                <section class="adm-view" id="view-dashboard" data-view="dashboard"></section>
+                <section class="adm-view" id="view-cases" data-view="cases" hidden></section>
+                <section class="adm-view" id="view-case" data-view="case" hidden></section>
+                <section class="adm-view" id="view-audit" data-view="audit" hidden></section>
+                <section class="adm-view" id="view-reports" data-view="reports" hidden></section>
+            </main>
+        </div>
+    </div>
+
+    <div class="viz-tip" id="viz-tip" role="tooltip"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="../cases.js"></script>
+    <script src="systemadmin.js"></script>
+</body>
+
+</html>
