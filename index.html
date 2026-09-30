@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ms">
 
 <head>
     <meta charset="utf-8">
@@ -19,12 +19,12 @@
 
     <div class="strip">
         <div class="wrap">
-            <div class="ticker">Bukan semua benar di internet. <span>Tidak</span>pasti?
+            <div class="ticker">Bukan semuanya benar di internet. <span>Tidak</span>pasti?
                 <span>Jangan</span>kongsi.
             </div>
             <div class="strip-right">
                 <a href="extension.html">
-                    <span>Browser extension</span>
+                    <span>Sambungan pelayar</span>
                 </a>
                 <div class="date"><b id="today"></b></div>
             </div>
@@ -33,13 +33,13 @@
 
     <header>
         <div class="wrap nav">
-            <a href="#home" class="logo" aria-label="sebenarnya.my home">
+            <a href="#home" class="logo" aria-label="Laman utama sebenarnya.my">
                 <img src="image/logo.png" alt="sebenarnya.my — Tidak Pasti Jangan Kongsi" class="logo-img">
             </a>
 
-            <nav class="links" aria-label="Primary">
-                <a href="#home" class="active" data-page="home">Home</a>
-                <a href="#foryou" data-page="foryou">For You</a>
+            <nav class="links" aria-label="Navigasi utama">
+                <a href="#home" class="active" data-page="home">Utama</a>
+                <a href="#foryou" data-page="foryou">Untuk Anda</a>
             </nav>
 
             <label class="search">
@@ -47,26 +47,27 @@
                     <circle cx="11" cy="11" r="7" />
                     <path d="M20 20l-3.5-3.5" />
                 </svg>
-                <input id="q" type="search" placeholder="Search a claim, topic or link…" autocomplete="off">
+                <input id="q" type="search" placeholder="Cari dakwaan, topik atau pautan…" autocomplete="off">
             </label>
 
-            <a href="userlogin.html" class="btn-login">Log in</a>
+            <a href="userlogin.html" class="btn-login">Log masuk</a>
         </div>
     </header>
 
     <div class="cats">
         <div class="wrap">
-            <a href="#" class="active">Top Stories</a>
-            <a href="#">Politics</a>
-            <a href="#">Health</a>
-            <a href="#">Economy</a>
-            <a href="#">Scams</a>
-            <a href="#">Disasters</a>
-            <a href="#">Technology</a>
-            <a href="#">Religion</a>
-            <a href="#">Education</a>
-            <a href="#">Transport</a>
-            <a href="#">Viral Videos</a>
+            <a href="#home" class="active" data-topic="">Berita Utama</a>
+            <a href="#topic/Politik" data-topic="Politik">Politik</a>
+            <a href="#topic/Kesihatan" data-topic="Kesihatan">Kesihatan</a>
+            <a href="#topic/Ekonomi" data-topic="Ekonomi">Ekonomi</a>
+            <a href="#topic/Penipuan" data-topic="Penipuan">Penipuan</a>
+            <a href="#topic/Bencana" data-topic="Bencana">Bencana</a>
+            <a href="#topic/Teknologi" data-topic="Teknologi">Teknologi</a>
+            <a href="#topic/Agama" data-topic="Agama">Agama</a>
+            <a href="#topic/Pendidikan" data-topic="Pendidikan">Pendidikan</a>
+            <a href="#topic/Pengangkutan" data-topic="Pengangkutan">Pengangkutan</a>
+            <a href="#topic/Alam%20Sekitar" data-topic="Alam Sekitar">Alam Sekitar</a>
+            <a href="#topic/Video%20Tular" data-topic="Video Tular">Video Tular</a>
         </div>
     </div>
 
@@ -74,17 +75,17 @@
         <!-- ===== Latest news ===== -->
         <section>
             <div class="section-head">
-                <h2>Latest Fact Checks</h2>
-                <a href="#" class="more">View all →</a>
+                <h2 id="home-title">Semakan Fakta Terkini</h2>
+                <a href="allarticles.html" class="more">Lihat semua →</a>
             </div>
 
             <div id="hero"></div>
 
             <div class="filters" role="tablist">
-                <button class="on" data-f="all">All</button>
-                <button data-f="false">False</button>
-                <button data-f="mislead">Misleading</button>
-                <button data-f="true">True</button>
+                <button class="on" data-f="all">Semua</button>
+                <button data-f="false">Palsu</button>
+                <button data-f="mislead">Mengelirukan</button>
+                <button data-f="true">Benar</button>
             </div>
 
             <div class="grid" id="grid"></div>
@@ -98,32 +99,32 @@
                         <path
                             d="M12 2c.5 3-1.2 5-2.8 6.8C7.6 10.6 6 12.4 6 15a6 6 0 0012 0c0-2.2-1-4-2.2-5.4-.2 1.3-.9 2.4-2 2.9.4-3.5-.4-7.7-1.8-10.5z" />
                     </svg>
-                    Most Searched
+                    Paling Dicari
                 </h2>
-                <div class="sub">What people are checking right now</div>
+                <div class="sub">Apa yang sedang disemak orang ramai</div>
                 <ol class="hot-list" id="hot"></ol>
             </div>
 
             <div class="panel">
-                <h2>Trending Topics</h2>
-                <div class="sub">Past 24 hours</div>
+                <h2>Topik Hangat</h2>
+                <div class="sub">24 jam lalu</div>
                 <div class="chips">
-                    <a href="#">#Budget2027</a>
-                    <a href="#">Flood warnings</a>
-                    <a href="#">Online scams</a>
-                    <a href="#">Toll rates</a>
-                    <a href="#">Vaccines</a>
-                    <a href="#">Fuel subsidy</a>
-                    <a href="#">AI deepfakes</a>
-                    <a href="#">School holidays</a>
-                    <a href="#">Haze</a>
+                    <a href="#">#Bajet2027</a>
+                    <a href="#">Amaran banjir</a>
+                    <a href="#">Penipuan dalam talian</a>
+                    <a href="#">Kadar tol</a>
+                    <a href="#">Vaksin</a>
+                    <a href="#">Subsidi bahan api</a>
+                    <a href="#">Deepfake AI</a>
+                    <a href="#">Cuti sekolah</a>
+                    <a href="#">Jerebu</a>
                 </div>
             </div>
 
             <div class="report">
-                <h3>Seen something suspicious?</h3>
-                <p>Send us a claim, screenshot or link and our team will verify it.</p>
-                <button data-report>Submit a claim</button>
+                <h3>Nampak sesuatu yang mencurigakan?</h3>
+                <p>Hantarkan dakwaan, tangkapan skrin atau pautan kepada kami dan pasukan kami akan menyemaknya.</p>
+                <button data-report>Hantar dakwaan</button>
             </div>
         </aside>
     </main>
@@ -134,15 +135,15 @@
 
         <aside>
             <div class="panel">
-                <h2>More fact checks</h2>
-                <div class="sub">Latest from our team</div>
+                <h2>Semakan fakta lain</h2>
+                <div class="sub">Terkini daripada pasukan kami</div>
                 <ol class="hot-list" id="more-list"></ol>
             </div>
 
             <div class="report">
-                <h3>Seen a similar claim?</h3>
-                <p>Send it to us and we'll let you know what we find.</p>
-                <button data-report>Submit a claim</button>
+                <h3>Nampak dakwaan yang serupa?</h3>
+                <p>Hantarkan kepada kami dan kami akan maklumkan dapatan kami.</p>
+                <button data-report>Hantar dakwaan</button>
             </div>
         </aside>
     </main>
@@ -150,9 +151,9 @@
     <!-- ===== For You (members only) ===== -->
     <section class="wrap foryou" id="page-foryou" data-for="foryou" hidden>
         <nav class="fy-tabs" role="tablist">
-            <button role="tab" class="on" data-tab="feed">My Feed</button>
-            <button role="tab" data-tab="saved">Saved News</button>
-            <button role="tab" data-tab="reported">Reported Cases</button>
+            <button role="tab" class="on" data-tab="feed">Suapan Saya</button>
+            <button role="tab" data-tab="saved">Berita Disimpan</button>
+            <button role="tab" data-tab="reported">Kes Dilaporkan</button>
         </nav>
 
         <div class="fy-empty" data-panel="feed">
@@ -161,32 +162,32 @@
                     d="M3 5a1 1 0 011-1h13a1 1 0 011 1v14a1 1 0 01-1 1H5a2 2 0 01-2-2V5zm3 2v4h5V7H6zm7 0v1.5h3V7h-3zm0 2.5V11h3V9.5h-3zM6 13v1.5h10V13H6zm0 3v1.5h10V16H6z" />
                 <path d="M19 8h1a1 1 0 011 1v9a2 2 0 01-2 2V8z" />
             </svg>
-            <button class="fy-cta" data-auth="signup">Sign Up and Discover New Topics</button>
+            <button class="fy-cta" data-auth="signup">Daftar dan Terokai Topik Baharu</button>
         </div>
 
         <div class="fy-empty" data-panel="saved" hidden>
             <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M6 2h12a1 1 0 011 1v19l-7-4.5L5 22V3a1 1 0 011-1z" />
             </svg>
-            <button class="fy-cta" data-auth="signup">Sign Up to Save Fact Checks</button>
+            <button class="fy-cta" data-auth="signup">Daftar untuk Menyimpan Semakan Fakta</button>
         </div>
 
         <div class="fy-empty" data-panel="reported" hidden>
             <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M5 2a1 1 0 011 1v1h13l-2.5 5L19 14H6v7a1 1 0 11-2 0V3a1 1 0 011-1z" />
             </svg>
-            <button class="fy-cta" data-auth="signup">Sign Up to Track Your Reports</button>
+            <button class="fy-cta" data-auth="signup">Daftar untuk Menjejak Laporan Anda</button>
         </div>
     </section>
 
     <footer>
         <div class="wrap">
-            <span>© 2023 - Malaysian Communications and Multimedia Commission — Verify before you share.</span>
+            <span>© 2023 - Suruhanjaya Komunikasi dan Multimedia Malaysia — Semak sebelum kongsi.</span>
         </div>
     </footer>
 
     <dialog class="modal" id="login-required" aria-labelledby="login-required-title">
-        <button class="modal-close" data-close aria-label="Close">&times;</button>
+        <button class="modal-close" data-close aria-label="Tutup">&times;</button>
         <div class="modal-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round">
@@ -194,11 +195,11 @@
                 <path d="M8 11V7a4 4 0 018 0v4" />
             </svg>
         </div>
-        <h3 id="login-required-title">Login required</h3>
-        <p>You need to register and log in to the system first.</p>
+        <h3 id="login-required-title">Log masuk diperlukan</h3>
+        <p>Anda perlu mendaftar dan log masuk ke sistem terlebih dahulu.</p>
         <div class="modal-actions">
-            <button class="btn-secondary" data-auth="signup">Register</button>
-            <button class="btn-primary" data-auth="login">Log in</button>
+            <button class="btn-secondary" data-auth="signup">Daftar</button>
+            <button class="btn-primary" data-auth="login">Log masuk</button>
         </div>
     </dialog>
 
@@ -211,12 +212,12 @@
 
         function render() {
             const term = q.value.trim().toLowerCase();
-            const list = stories.filter(s => s.id !== HERO_ID &&
+            const list = stories.filter(s => inTopic(s) &&
                 (filter === "all" || s.v === filter) &&
                 (!term || (s.title + " " + s.cat + " " + s.claim).toLowerCase().includes(term)));
             $("grid").innerHTML = list.length
                 ? list.map(card).join("")
-                : `<div class="empty">No fact checks match “${esc(q.value)}”.</div>`;
+                : `<div class="empty">${emptyGridText(q.value.trim(), esc)}</div>`;
         }
 
         document.querySelectorAll(".filters button").forEach(b => b.addEventListener("click", () => {
@@ -227,7 +228,8 @@
         }));
 
         q.addEventListener("input", () => {
-            if (location.hash && location.hash !== "#home") location.hash = "#home";
+            // Search within the current topic when already on the home view
+            if ($("page-home").hidden) location.hash = "#home";
             render();
         });
 
@@ -252,15 +254,21 @@
             if (e.target === loginRequired || e.target.closest("[data-close]")) loginRequired.close();
         });
 
-        /* ---------- Router: #home, #foryou, #article/<id> ---------- */
+        /* ---------- Router: #home, #topic/<name>, #foryou, #article/<id> ---------- */
         function route() {
             let [page, sub] = location.hash.slice(1).split("/");
+            const topicName = page === "topic" ? decodeURIComponent(sub || "") : "";
+            if (page === "topic") page = "home";
             if (!["home", "foryou", "article"].includes(page)) page = "home";
             if (page === "article" && !byId[sub]) page = "home";
 
             document.querySelectorAll("[data-for]").forEach(el => el.hidden = el.dataset.for !== page);
             document.querySelectorAll(".links a").forEach(a => a.classList.toggle("active", a.dataset.page === page));
 
+            if (page === "home") {
+                applyTopic(topicName);
+                render();
+            }
             if (page === "article") {
                 $("article").innerHTML = articleHTML(byId[sub]);
                 $("more-list").innerHTML = moreList(sub);
@@ -269,7 +277,7 @@
         }
         window.addEventListener("hashchange", route);
 
-        $("today").textContent = new Date().toLocaleDateString("en-MY", {
+        $("today").textContent = new Date().toLocaleDateString("ms-MY", {
             weekday: "long", day: "numeric", month: "long", year: "numeric"
         });
 

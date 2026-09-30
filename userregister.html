@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="ms">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Register | SEBENARNYA>MY</title>
+    <title>Daftar | SEBENARNYA.MY</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -16,12 +16,14 @@
 
 <body class="auth-body">
 
+    <div class="auth-bg" aria-hidden="true"><i></i><i></i><i></i></div>
+
     <header class="auth-top">
         <div class="wrap">
-            <a href="index.html" class="logo" aria-label="sebenarnya.my home">
+            <a href="index.html" class="logo" aria-label="Laman utama sebenarnya.my">
                 <img src="image/logo.png" alt="sebenarnya.my — Tidak Pasti Jangan Kongsi" class="logo-img">
             </a>
-            <a href="index.html" class="auth-back">Home</a>
+            <a href="index.html" class="auth-back">Utama</a>
         </div>
     </header>
 
@@ -30,48 +32,49 @@
             <aside class="auth-brand">
                 <img src="image/icon.png" alt="" class="auth-brand-icon">
                 <h2>Tidak pasti, jangan kongsi.</h2>
-                <p>Create a free account to get more out of sebenarnya.my.</p>
+                <p>Cipta akaun percuma untuk manfaat lebih daripada sebenarnya.my.</p>
                 <ul>
-                    <li>Follow topics for a personalised feed</li>
-                    <li>Save fact checks to read later</li>
-                    <li>Report suspicious claims and track them</li>
+                    <li>Ikuti topik untuk suapan yang diperibadikan</li>
+                    <li>Simpan semakan fakta untuk dibaca kemudian</li>
+                    <li>Laporkan dakwaan mencurigakan dan jejakinya</li>
                 </ul>
             </aside>
 
             <section class="auth-form-wrap">
-                <h1>Create an account</h1>
-                <p class="auth-sub">It's free and takes less than a minute.</p>
+                <h1>Cipta akaun</h1>
+                <p class="auth-sub">Percuma dan mengambil masa kurang daripada seminit.</p>
 
                 <div class="auth-alert error" id="form-error" role="alert" hidden></div>
 
                 <form id="register-form" novalidate>
                     <div class="field">
-                        <label for="email">Email</label>
-                        <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com"
+                        <label for="email">E-mel</label>
+                        <input id="email" name="email" type="email" autocomplete="email" placeholder="anda@contoh.com"
                             required>
                         <small class="field-error" id="email-error"></small>
                     </div>
 
                     <div class="field">
-                        <label for="password">Password</label>
+                        <label for="password">Kata laluan</label>
                         <div class="pw-wrap">
                             <input id="password" name="password" type="password" autocomplete="new-password"
-                                placeholder="At least 8 characters" minlength="8" required>
-                            <button type="button" class="pw-toggle" aria-label="Show password">Show</button>
+                                placeholder="Sekurang-kurangnya 8 aksara" minlength="8" required>
+                            <button type="button" class="pw-toggle" aria-label="Tunjuk kata laluan">Tunjuk</button>
                         </div>
                         <div class="pw-meter" aria-hidden="true"><i></i><i></i><i></i></div>
-                        <small class="field-hint" id="pw-hint">Use 8 or more characters with a mix of letters and
-                            numbers.</small>
+                        <small class="field-hint" id="pw-hint">Gunakan 8 aksara atau lebih dengan gabungan huruf dan
+                            nombor.</small>
                         <small class="field-error" id="password-error"></small>
                     </div>
 
-                    <button type="submit" class="auth-submit">Register</button>
+                    <button type="submit" class="auth-submit">Daftar</button>
                 </form>
 
-                <p class="auth-switch">Already have an account? <a href="userlogin.html">Log in</a></p>
+                <p class="auth-switch">Sudah mempunyai akaun? <a href="userlogin.html">Log masuk</a></p>
             </section>
         </div>
     </main>
+
 
     <script>
         const form = document.getElementById("register-form");
@@ -88,11 +91,11 @@
 
         function validate() {
             const okEmail = setError(email,
-                !email.value.trim() ? "Email is required." :
-                    !EMAIL_RE.test(email.value.trim()) ? "Enter a valid email address." : "");
+                !email.value.trim() ? "E-mel diperlukan." :
+                    !EMAIL_RE.test(email.value.trim()) ? "Masukkan alamat e-mel yang sah." : "");
             const okPassword = setError(password,
-                !password.value ? "Password is required." :
-                    password.value.length < 8 ? "Password must be at least 8 characters." : "");
+                !password.value ? "Kata laluan diperlukan." :
+                    password.value.length < 8 ? "Kata laluan mestilah sekurang-kurangnya 8 aksara." : "");
             return okEmail && okPassword;
         }
 
@@ -112,8 +115,8 @@
         document.querySelector(".pw-toggle").addEventListener("click", e => {
             const show = password.type === "password";
             password.type = show ? "text" : "password";
-            e.target.textContent = show ? "Hide" : "Show";
-            e.target.setAttribute("aria-label", show ? "Hide password" : "Show password");
+            e.target.textContent = show ? "Sembunyi" : "Tunjuk";
+            e.target.setAttribute("aria-label", show ? "Sembunyikan kata laluan" : "Tunjuk kata laluan");
         });
 
         [email, password].forEach(i => i.addEventListener("input", () => {
@@ -129,7 +132,7 @@
             // by showing it in #form-error. No database yet, so any valid input "registers".
             const btn = form.querySelector(".auth-submit");
             btn.disabled = true;
-            btn.textContent = "Creating account…";
+            btn.textContent = "Sedang mencipta akaun…";
             setTimeout(() => {
                 location.href = "userlogin.html?registered=1&email=" + encodeURIComponent(email.value.trim());
             }, 600);

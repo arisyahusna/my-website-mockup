@@ -1,7 +1,7 @@
 /* Shared by index.html (public) and userhome.html (members):
    fact-check data, card/article templates, and the share dialog. */
 
-const LABEL = { false: "False", mislead: "Misleading", true: "True" };
+const LABEL = { false: "Palsu", mislead: "Mengelirukan", true: "Benar" };
 
 // Sample content — replace with real data from your CMS/API
 const stories = [
@@ -9,137 +9,137 @@ const stories = [
     id: "rm500",
     v: "false",
     title:
-      'Viral WhatsApp message offering RM500 "digital aid" is a phishing scam',
-    cat: "Scams",
-    ago: "18 min ago",
+      'Mesej tular WhatsApp tawar "bantuan digital" RM500 ialah penipuan pancingan data',
+    cat: "Penipuan",
+    ago: "18 minit lalu",
     img: "hero",
     split: [92, 6, 2],
     n: 24,
     claim:
-      "Recipients can claim RM500 by clicking a link and entering their IC number and bank details.",
+      "Penerima boleh menuntut RM500 dengan menekan pautan dan memasukkan nombor kad pengenalan serta butiran bank mereka.",
     summary:
-      "No agency has announced such a programme. The link leads to a lookalike site built to harvest banking credentials, and has been reported to the authorities.",
+      "Tiada agensi yang mengumumkan program sedemikian. Pautan tersebut membawa ke laman tiruan yang dibina untuk mencuri maklumat perbankan, dan telah dilaporkan kepada pihak berkuasa.",
   },
   {
     id: "flood",
     v: "false",
-    title: "Photo of flooded highway is from 2021, not this week's storm",
-    cat: "Disasters",
-    ago: "42 min ago",
+    title: "Foto lebuh raya dinaiki air diambil pada 2021, bukan ribut minggu ini",
+    cat: "Bencana",
+    ago: "42 minit lalu",
     img: "flood",
     split: [88, 10, 2],
     n: 17,
-    claim: "A photo shows a highway flooded during this week's storm.",
+    claim: "Sekeping foto menunjukkan lebuh raya dinaiki air semasa ribut minggu ini.",
     summary:
-      "A reverse image search shows the photo was first published in December 2021. It does not show this week's weather.",
+      "Carian imej terbalik menunjukkan foto itu pertama kali disiarkan pada Disember 2021. Ia tidak menunjukkan cuaca minggu ini.",
   },
   {
     id: "fuel",
     v: "mislead",
     title:
-      "Claim that petrol prices will double next month leaves out key context",
-    cat: "Economy",
-    ago: "1 hr ago",
+      "Dakwaan harga petrol naik dua kali ganda bulan depan tidak menyatakan konteks penting",
+    cat: "Ekonomi",
+    ago: "1 jam lalu",
     img: "fuel",
     split: [20, 70, 10],
     n: 21,
-    claim: "Petrol prices will double from next month.",
+    claim: "Harga petrol akan naik dua kali ganda mulai bulan depan.",
     summary:
-      "A subsidy adjustment is being discussed, but no announcement says prices will double. The post leaves out that any change would be phased in.",
+      "Pelarasan subsidi sedang dibincangkan, tetapi tiada pengumuman yang menyatakan harga akan naik dua kali ganda. Hantaran itu tidak menyebut bahawa sebarang perubahan akan dilaksanakan secara berperingkat.",
   },
   {
     id: "school",
     v: "true",
-    title: "Yes, the new school term starts one week earlier in some states",
-    cat: "Education",
-    ago: "2 hr ago",
+    title: "Benar, penggal persekolahan baharu bermula seminggu lebih awal di beberapa negeri",
+    cat: "Pendidikan",
+    ago: "2 jam lalu",
     img: "school",
     split: [3, 7, 90],
     n: 12,
-    claim: "The new school term starts one week earlier in some states.",
+    claim: "Penggal persekolahan baharu bermula seminggu lebih awal di beberapa negeri.",
     summary:
-      "This matches the published school calendar, which sets different start dates for some states.",
+      "Ini selaras dengan kalendar persekolahan yang diterbitkan, yang menetapkan tarikh mula berbeza bagi beberapa negeri.",
   },
   {
     id: "deepfake",
     v: "false",
-    title: "AI-generated video of minister announcing public holiday is fake",
-    cat: "Technology",
-    ago: "3 hr ago",
+    title: "Video janaan AI menteri mengumumkan cuti umum adalah palsu",
+    cat: "Teknologi",
+    ago: "3 jam lalu",
     img: "deepfake",
     split: [95, 5, 0],
     n: 30,
-    claim: "A video shows a minister announcing a surprise public holiday.",
+    claim: "Sebuah video menunjukkan seorang menteri mengumumkan cuti umum secara mengejut.",
     summary:
-      "The video is AI-generated. The voice and lip movements don't match, and no such holiday appears in any official announcement.",
+      "Video itu dijana oleh AI. Suara dan gerakan bibir tidak sepadan, dan tiada cuti sedemikian dalam mana-mana pengumuman rasmi.",
   },
   {
     id: "vitamin",
     v: "mislead",
-    title: "Post linking common vitamin to cancer cure misreads a lab study",
-    cat: "Health",
-    ago: "4 hr ago",
+    title: "Hantaran kaitkan vitamin biasa dengan penawar kanser salah tafsir kajian makmal",
+    cat: "Kesihatan",
+    ago: "4 jam lalu",
     img: "vitamin",
     split: [35, 60, 5],
     n: 14,
-    claim: "A common vitamin cures cancer, according to a new study.",
+    claim: "Vitamin biasa boleh menyembuhkan kanser, menurut satu kajian baharu.",
     summary:
-      "The study was done on cells in a lab, not on people. Its authors say it does not show that the vitamin cures cancer.",
+      "Kajian itu dijalankan ke atas sel di makmal, bukan ke atas manusia. Penyelidiknya menyatakan kajian itu tidak membuktikan vitamin tersebut menyembuhkan kanser.",
   },
   {
     id: "toll",
     v: "false",
-    title: "No, toll-free travel during festive season has not been extended",
-    cat: "Transport",
-    ago: "5 hr ago",
+    title: "Tidak, perjalanan tanpa tol musim perayaan tidak dilanjutkan",
+    cat: "Pengangkutan",
+    ago: "5 jam lalu",
     img: "toll",
     split: [80, 15, 5],
     n: 9,
     claim:
-      "Toll-free travel during the festive season has been extended by a week.",
+      "Perjalanan tanpa tol sempena musim perayaan telah dilanjutkan selama seminggu.",
     summary:
-      "No extension has been announced. The dates being shared come from an older announcement.",
+      "Tiada lanjutan diumumkan. Tarikh yang dikongsi itu diambil daripada pengumuman lama.",
   },
   {
     id: "haze",
     v: "true",
-    title: "Haze readings in parts of the peninsula did reach unhealthy levels",
-    cat: "Environment",
-    ago: "6 hr ago",
+    title: "Bacaan jerebu di beberapa kawasan semenanjung memang mencapai tahap tidak sihat",
+    cat: "Alam Sekitar",
+    ago: "6 jam lalu",
     img: "haze",
     split: [2, 8, 90],
     n: 19,
-    claim: "Haze readings in parts of the peninsula reached unhealthy levels.",
+    claim: "Bacaan jerebu di beberapa kawasan semenanjung mencapai tahap tidak sihat.",
     summary:
-      "Air quality readings for the dates mentioned did reach the unhealthy range at several monitoring stations.",
+      "Bacaan kualiti udara bagi tarikh yang disebut memang mencapai julat tidak sihat di beberapa stesen pemantauan.",
   },
   {
     id: "bank",
     v: "false",
     title:
-      "Viral 'new bank charge' notice circulating on Telegram is fabricated",
-    cat: "Scams",
-    ago: "7 hr ago",
+      "Notis tular 'caj bank baharu' yang tersebar di Telegram adalah rekaan",
+    cat: "Penipuan",
+    ago: "7 jam lalu",
     img: "bank",
     split: [90, 8, 2],
     n: 11,
     claim:
-      "Banks will charge a new fee for every online transfer starting next week.",
+      "Bank akan mengenakan caj baharu bagi setiap pindahan dalam talian mulai minggu depan.",
     summary:
-      "The notice is fabricated. It uses an outdated logo, and no bank has announced such a charge.",
+      "Notis itu adalah rekaan. Ia menggunakan logo lama, dan tiada bank yang mengumumkan caj sedemikian.",
   },
   {
     id: "rice",
     v: "mislead",
-    title: "Chart on rising rice prices uses a cherry-picked time range",
-    cat: "Economy",
-    ago: "8 hr ago",
+    title: "Carta kenaikan harga beras menggunakan tempoh masa terpilih",
+    cat: "Ekonomi",
+    ago: "8 jam lalu",
     img: "rice",
     split: [15, 75, 10],
     n: 8,
-    claim: "A chart shows rice prices have tripled.",
+    claim: "Sebuah carta menunjukkan harga beras telah naik tiga kali ganda.",
     summary:
-      "The chart starts at an unusually low point. Measured over a longer period, the increase is much smaller.",
+      "Carta itu bermula pada titik yang luar biasa rendah. Jika diukur dalam tempoh yang lebih panjang, kenaikannya jauh lebih kecil.",
   },
 ];
 const byId = Object.fromEntries(stories.map((s) => [s.id, s]));
@@ -148,41 +148,41 @@ const HERO_ID = "rm500";
 const hot = [
   {
     id: "rm500",
-    title: "RM500 digital aid WhatsApp link",
+    title: "Pautan WhatsApp bantuan digital RM500",
     searches: "48.2k",
     up: "+312%",
   },
   {
     id: "fuel",
-    title: "Petrol price to double next month",
+    title: "Harga petrol naik dua kali ganda bulan depan",
     searches: "22.9k",
     up: "+118%",
   },
   {
     id: "deepfake",
-    title: "Minister public holiday video",
+    title: "Video menteri umum cuti umum",
     searches: "18.4k",
     up: "+96%",
   },
   {
     id: "school",
-    title: "School term starting earlier",
+    title: "Penggal sekolah bermula lebih awal",
     searches: "12.1k",
     up: "+64%",
   },
   {
     id: "vitamin",
-    title: "Vitamin cures cancer study",
+    title: "Kajian vitamin sembuhkan kanser",
     searches: "9.8k",
     up: "+41%",
   },
   {
     id: "bank",
-    title: "New bank charge notice on Telegram",
+    title: "Notis caj bank baharu di Telegram",
     searches: "7.3k",
     up: "+28%",
   },
-  { id: "flood", title: "Flooded highway photo", searches: "5.1k", up: "+19%" },
+  { id: "flood", title: "Foto lebuh raya dinaiki air", searches: "5.1k", up: "+19%" },
 ];
 
 const ICON = {
@@ -208,9 +208,9 @@ function actionBtns(id, big) {
   const on = isSaved(id);
   return `
         <button class="act-btn${big ? " big" : ""}${on ? " on" : ""}" data-save="${id}" aria-pressed="${on}">
-            ${ICON.save}<span>${on ? "Saved" : "Save"}</span>
+            ${ICON.save}<span>${on ? "Disimpan" : "Simpan"}</span>
         </button>
-        <button class="act-btn${big ? " big" : ""}" data-share="${id}">${ICON.share}<span>Share</span></button>`;
+        <button class="act-btn${big ? " big" : ""}" data-share="${id}">${ICON.share}<span>Kongsi</span></button>`;
 }
 
 function consensusBar(s) {
@@ -232,7 +232,7 @@ function card(s) {
             <div class="meta"><span>${s.cat}</span><span class="dot"></span><span>${s.ago}</span></div>
             <div class="consensus">
                 ${consensusBar(s)}
-                <div class="consensus-label">${s.n} sources · ${agreePct(s)}% agree</div>
+                <div class="consensus-label">${s.n} sumber · ${agreePct(s)}% bersetuju</div>
             </div>
             <div class="card-actions">${actionBtns(s.id)}</div>
         </article>`;
@@ -243,16 +243,16 @@ function heroHTML(s) {
         <article class="hero">
             <a href="#article/${s.id}" class="hero-img">
                 <img src="https://picsum.photos/seed/sbn-${s.img}/900/640" alt="">
-                <span class="tag">Top Story</span>
+                <span class="tag">Sorotan Utama</span>
             </a>
             <div class="hero-body">
                 <span class="verdict v-${s.v}">${LABEL[s.v]}</span>
                 <h3><a href="#article/${s.id}">${s.title}</a></h3>
-                <div class="claim"><b>The claim</b>${s.claim}</div>
+                <div class="claim"><b>Dakwaan</b>${s.claim}</div>
                 <p>${s.summary}</p>
                 <div class="consensus">
                     ${consensusBar(s)}
-                    <div class="consensus-label">${s.n} sources checked · ${agreePct(s)}% rate this ${LABEL[s.v].toLowerCase()}</div>
+                    <div class="consensus-label">${s.n} sumber disemak · ${agreePct(s)}% menilai ini ${LABEL[s.v].toLowerCase()}</div>
                 </div>
                 <div class="hero-foot">
                     <div class="meta"><span>${s.cat}</span><span class="dot"></span><span>${s.ago}</span></div>
@@ -270,7 +270,7 @@ function hotList(items) {
             <h5>${h.title}</h5>
             <div class="hot-meta">
                 <span class="verdict v-${byId[h.id].v}">${LABEL[byId[h.id].v]}</span>
-                ${h.searches ? `<span>${h.searches} searches</span><span class="trend">▲ ${h.up}</span>` : `<span>${byId[h.id].ago}</span>`}
+                ${h.searches ? `<span>${h.searches} carian</span><span class="trend">▲ ${h.up}</span>` : `<span>${byId[h.id].ago}</span>`}
             </div>
         </a></li>`,
     )
@@ -291,45 +291,72 @@ function articleHTML(s) {
   const [f, m, t] = s.split;
   const advice =
     s.v === "true"
-      ? "This claim is accurate. If you share it, include the context above."
-      : "If you receive this claim, please don't forward it. Share this fact check instead so others can see the facts.";
+      ? "Dakwaan ini tepat. Jika anda mengongsikannya, sertakan konteks di atas."
+      : "Jika anda menerima dakwaan ini, jangan sebarkannya. Kongsi semakan fakta ini supaya orang lain juga tahu fakta sebenar.";
 
   return `
-        <a href="#home" class="back-link">← Back to latest fact checks</a>
+        <a href="#home" class="back-link">← Kembali ke semakan fakta terkini</a>
         <span class="verdict v-${s.v}">${LABEL[s.v]}</span>
         <h1>${s.title}</h1>
-        <div class="meta"><span>${s.cat}</span><span class="dot"></span><span>${s.ago}</span><span class="dot"></span><span>3 min read</span><span class="dot"></span><span>sebenarnya.my fact-check team</span></div>
+        <div class="meta"><span>${s.cat}</span><span class="dot"></span><span>${s.ago}</span><span class="dot"></span><span>3 minit bacaan</span><span class="dot"></span><span>Pasukan semakan fakta sebenarnya.my</span></div>
         <div class="article-actions">${actionBtns(s.id, true)}</div>
         <div class="article-img"><img src="https://picsum.photos/seed/sbn-${s.img}/1200/675" alt=""></div>
 
-        <div class="claim"><b>The claim</b>${s.claim}</div>
+        <div class="claim"><b>Dakwaan</b>${s.claim}</div>
 
-        <h3>Our verdict</h3>
+        <h3>Keputusan kami</h3>
         <div class="verdict-box vb-${s.v}">
             <span class="verdict v-${s.v}">${LABEL[s.v]}</span>
             <p>${s.summary}</p>
         </div>
 
-        <h3>What we found</h3>
-        <p>We compared this claim with official statements, public records and reporting from ${s.n} sources.
-           ${agreePct(s)}% of them reached the same conclusion: <b>${LABEL[s.v].toLowerCase()}</b>.</p>
+        <h3>Dapatan kami</h3>
+        <p>Kami membandingkan dakwaan ini dengan kenyataan rasmi, rekod awam dan laporan daripada ${s.n} sumber.
+           ${agreePct(s)}% daripadanya mencapai kesimpulan yang sama: <b>${LABEL[s.v].toLowerCase()}</b>.</p>
         <div class="consensus">
             ${consensusBar(s)}
-            <div class="consensus-label">False ${f}% · Misleading ${m}% · True ${t}%</div>
+            <div class="consensus-label">Palsu ${f}% · Mengelirukan ${m}% · Benar ${t}%</div>
         </div>
         <p>${advice}</p>
 
-        <h3>How we checked</h3>
+        <h3>Cara kami menyemak</h3>
         <ol class="how">
-            <li>Traced the claim back to where it first appeared.</li>
-            <li>Checked it against official records and statements.</li>
-            <li>Contacted the agencies or people involved to confirm.</li>
+            <li>Menjejak dakwaan ke tempat ia mula-mula muncul.</li>
+            <li>Menyemaknya dengan rekod dan kenyataan rasmi.</li>
+            <li>Menghubungi agensi atau pihak yang terlibat untuk pengesahan.</li>
         </ol>
 
         <div class="article-foot">
-            <p>Found this useful? Help stop the spread.</p>
+            <p>Bermanfaat? Bantu hentikan penyebaran.</p>
             <div class="card-actions">${actionBtns(s.id, true)}</div>
         </div>`;
+}
+
+/* ---------- Topic filter (category bar on the home pages) ---------- */
+// "#topic/<name>" shows the home page filtered to one topic; "#home" shows everything
+let topic = "";
+
+function applyTopic(name) {
+  topic = name;
+  document.querySelectorAll(".cats [data-topic]").forEach((a) =>
+    a.classList.toggle("active", a.dataset.topic === name),
+  );
+  const title = document.getElementById("home-title");
+  if (title) title.textContent = name ? `Topik: ${name}` : "Semakan Fakta Terkini";
+  // The top story only shows on the unfiltered view; inside a topic it is just another card
+  const hero = document.getElementById("hero");
+  if (hero) hero.hidden = !!name;
+}
+
+function inTopic(s) {
+  return topic ? s.cat === topic : s.id !== HERO_ID;
+}
+
+function emptyGridText(term, escFn) {
+  if (term) return `Tiada semakan fakta yang sepadan dengan “${escFn(term)}”.`;
+  return topic
+    ? `Belum ada semakan fakta dalam topik ${topic}.`
+    : "Tiada semakan fakta untuk dipaparkan.";
 }
 
 /* ---------- Toast + share dialog (added to the page on load) ---------- */
@@ -338,8 +365,8 @@ document.body.insertAdjacentHTML(
   "beforeend",
   `
     <dialog class="modal form-modal" id="share-dialog" aria-labelledby="share-heading">
-        <button class="modal-close" data-close aria-label="Close">&times;</button>
-        <h3 id="share-heading">Share this fact check</h3>
+        <button class="modal-close" data-close aria-label="Tutup">&times;</button>
+        <h3 id="share-heading">Kongsi semakan fakta ini</h3>
         <p class="share-title" id="share-title"></p>
         <div class="share-grid">
             <a class="share-opt" id="share-wa" target="_blank" rel="noopener"><span class="share-ic wa">W</span>WhatsApp</a>
@@ -348,10 +375,10 @@ document.body.insertAdjacentHTML(
             <a class="share-opt" id="share-tg" target="_blank" rel="noopener"><span class="share-ic tg">T</span>Telegram</a>
         </div>
         <div class="share-link">
-            <input id="share-url" readonly aria-label="Link to this fact check">
-            <button class="btn-primary" id="share-copy">Copy</button>
+            <input id="share-url" readonly aria-label="Pautan ke semakan fakta ini">
+            <button class="btn-primary" id="share-copy">Salin</button>
         </div>
-        <button class="link-btn share-more" id="share-native" hidden>More sharing options…</button>
+        <button class="link-btn share-more" id="share-native" hidden>Lagi pilihan perkongsian…</button>
     </dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>`,
 );
@@ -392,7 +419,7 @@ function openShare(id) {
     "&text=" +
     encodeURIComponent(text);
   document.getElementById("share-native").hidden = !navigator.share;
-  document.getElementById("share-copy").textContent = "Copy";
+  document.getElementById("share-copy").textContent = "Salin";
   shareDialog.showModal();
 }
 
@@ -409,8 +436,8 @@ document.getElementById("share-copy").addEventListener("click", async () => {
     input.select();
     document.execCommand("copy");
   }
-  document.getElementById("share-copy").textContent = "Copied!";
-  toast("Link copied");
+  document.getElementById("share-copy").textContent = "Disalin!";
+  toast("Pautan disalin");
 });
 
 document.getElementById("share-native").addEventListener("click", () => {

@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="ms">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Semua Semakan Fakta | SEBENARNYA.MY</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/webp" href="image/icon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="strip">
+        <div class="wrap">
+            <div class="ticker">Bukan semuanya benar di internet. <span>Tidak</span>pasti?
+                <span>Jangan</span>kongsi.
+            </div>
+            <div class="strip-right">
+                <a href="extension.html">
+                    <span>Sambungan pelayar</span>
+                </a>
+                <div class="date"><b id="today"></b></div>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="wrap nav">
+            <a href="index.html" class="logo" data-home aria-label="Laman utama sebenarnya.my">
+                <img src="image/logo.png" alt="sebenarnya.my — Tidak Pasti Jangan Kongsi" class="logo-img">
+            </a>
+
+            <nav class="links" aria-label="Navigasi utama">
+                <a href="index.html" data-home>Utama</a>
+                <a href="index.html#foryou" data-home="#foryou">Untuk Anda</a>
+            </nav>
+
+            <label class="search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M20 20l-3.5-3.5" />
+                </svg>
+                <input id="q" type="search" placeholder="Cari dakwaan, topik atau pautan…" autocomplete="off">
+            </label>
+
+            <!-- Filled in by the script: "Log masuk" for visitors, account button for members -->
+            <div id="account-slot"></div>
+        </div>
+    </header>
+
+    <!-- ===== All articles ===== -->
+    <main class="wrap" data-for="list">
+        <section>
+            <div class="all-head">
+                <a href="index.html" class="back-link" data-home>← Kembali ke laman utama</a>
+                <h1>Semua Semakan Fakta</h1>
+                <p>Semua dakwaan yang telah disemak oleh pasukan kami. Klik mana-mana artikel untuk membacanya.</p>
+            </div>
+
+            <div class="all-controls">
+                <div class="filters" id="verdict-filters" role="tablist">
+                    <button class="on" data-f="all">Semua</button>
+                    <button data-f="false">Palsu</button>
+                    <button data-f="mislead">Mengelirukan</button>
+                    <button data-f="true">Benar</button>
+                </div>
+                <div class="all-selects">
+                    <label class="select-wrap">
+                        <span class="sr-only">Kategori</span>
+                        <select id="cat-filter">
+                            <option value="">Semua kategori</option>
+                        </select>
+                    </label>
+                    <label class="select-wrap">
+                        <span class="sr-only">Susun mengikut</span>
+                        <select id="sort">
+                            <option value="new">Terkini dahulu</option>
+                            <option value="old">Terlama dahulu</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+
+            <div class="all-count" id="count" aria-live="polite"></div>
+            <div class="art-list" id="list"></div>
+        </section>
+
+        <aside>
+            <div class="panel">
+                <h2>
+                    <svg class="flame" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 2c.5 3-1.2 5-2.8 6.8C7.6 10.6 6 12.4 6 15a6 6 0 0012 0c0-2.2-1-4-2.2-5.4-.2 1.3-.9 2.4-2 2.9.4-3.5-.4-7.7-1.8-10.5z" />
+                    </svg>
+                    Paling Dicari
+                </h2>
+                <div class="sub">Apa yang sedang disemak orang ramai</div>
+                <ol class="hot-list" id="hot"></ol>
+            </div>
+        </aside>
+    </main>
+
+    <!-- ===== Single article ===== -->
+    <main class="wrap" data-for="article" hidden>
+        <article class="article" id="article"></article>
+
+        <aside>
+            <div class="panel">
+                <h2>Semakan fakta lain</h2>
+                <div class="sub">Terkini daripada pasukan kami</div>
+                <ol class="hot-list" id="more-list"></ol>
+            </div>
+        </aside>
+    </main>
+
+    <footer>
+        <div class="wrap">
+            <span>© 2023 - Suruhanjaya Komunikasi dan Multimedia Malaysia — Semak sebelum kongsi.</span>
+        </div>
+    </footer>
+
+    <dialog class="modal" id="login-required" aria-labelledby="login-required-title">
+        <button class="modal-close" data-close aria-label="Tutup">&times;</button>
+        <div class="modal-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="5" y="11" width="14" height="10" rx="2" />
+                <path d="M8 11V7a4 4 0 018 0v4" />
+            </svg>
+        </div>
+        <h3 id="login-required-title">Log masuk diperlukan</h3>
+        <p>Anda perlu mendaftar dan log masuk ke sistem terlebih dahulu.</p>
+        <div class="modal-actions">
+            <a href="userregister.html" class="btn-secondary">Daftar</a>
+            <a href="userlogin.html" class="btn-primary">Log masuk</a>
+        </div>
+    </dialog>
+
+    <script src="articles.js"></script>
+    <script>
+        const $ = id => document.getElementById(id);
+        const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+        /* ---------- Visitor or member? ---------- */
+        // Members arrive from userhome.html (?from=userhome) or have logged in on this browser
+        let userEmail = "";
+        try { userEmail = localStorage.getItem("sbn-user") || ""; } catch (e) { }
+        const member = !!userEmail || new URLSearchParams(location.search).get("from") === "userhome";
+        const HOME = member ? "userhome.html" : "index.html";
+
+        document.querySelectorAll("[data-home]").forEach(a => a.href = HOME + (a.dataset.home || ""));
+        $("account-slot").innerHTML = member
+            ? `<a href="userhome.html" class="avatar" aria-label="Akaun saya" title="Akaun saya">${esc((userEmail || "D")[0].toUpperCase())}</a>`
+            : `<a href="userlogin.html" class="btn-login">Log masuk</a>`;
+
+        /* ---------- Saving (members share the saved list with userhome.html) ---------- */
+        const STORE_KEY = "sbn-state-ms";
+        let state = null;
+        try { state = JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) { }
+        if (member) {
+            if (!state || !Array.isArray(state.saved)) state = { saved: [] };
+            isSaved = id => state.saved.includes(id);
+        }
+
+        function toggleSave(id) {
+            const on = !isSaved(id);
+            state.saved = on ? [id, ...state.saved] : state.saved.filter(x => x !== id);
+            try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { }
+            document.querySelectorAll(`[data-save="${id}"]`).forEach(b => {
+                b.classList.toggle("on", on);
+                b.setAttribute("aria-pressed", on);
+                b.querySelector("span").textContent = on ? "Disimpan" : "Simpan";
+            });
+            toast(on ? "Disimpan ke Berita Disimpan" : "Dibuang daripada Berita Disimpan");
+        }
+
+        /* ---------- List ---------- */
+        const q = $("q");
+        let verdictFilter = "all";
+
+        [...new Set(stories.map(s => s.cat))].sort().forEach(c =>
+            $("cat-filter").insertAdjacentHTML("beforeend", `<option>${c}</option>`));
+
+        function row(s) {
+            return `
+                <article class="art-row" data-open="${s.id}">
+                    <a href="#article/${s.id}" class="art-thumb"><img loading="lazy" src="https://picsum.photos/seed/sbn-${s.img}/480/300" alt=""></a>
+                    <div class="art-body">
+                        <div class="art-top">
+                            <span class="verdict v-${s.v}">${LABEL[s.v]}</span>
+                            <span class="art-cat">${s.cat}</span>
+                        </div>
+                        <h3><a href="#article/${s.id}">${s.title}</a></h3>
+                        <p>${s.summary}</p>
+                        <div class="art-foot">
+                            <div class="meta"><span>${s.ago}</span><span class="dot"></span><span>${s.n} sumber disemak</span></div>
+                            <div class="card-actions">${actionBtns(s.id)}</div>
+                        </div>
+                    </div>
+                </article>`;
+        }
+
+        function renderList() {
+            const term = q.value.trim().toLowerCase();
+            const cat = $("cat-filter").value;
+            // stories are stored newest first
+            let list = stories.filter(s =>
+                (verdictFilter === "all" || s.v === verdictFilter) &&
+                (!cat || s.cat === cat) &&
+                (!term || (s.title + " " + s.cat + " " + s.claim + " " + s.summary).toLowerCase().includes(term)));
+            if ($("sort").value === "old") list = list.slice().reverse();
+
+            $("count").textContent = `${list.length} daripada ${stories.length} semakan fakta`;
+            $("list").innerHTML = list.length
+                ? list.map(row).join("")
+                : `<div class="empty">Tiada semakan fakta yang sepadan${term ? ` dengan “${esc(q.value)}”` : ""}.</div>`;
+        }
+
+        $("verdict-filters").addEventListener("click", e => {
+            const b = e.target.closest("button");
+            if (!b) return;
+            $("verdict-filters").querySelector(".on").classList.remove("on");
+            b.classList.add("on");
+            verdictFilter = b.dataset.f;
+            renderList();
+        });
+        $("cat-filter").addEventListener("change", renderList);
+        $("sort").addEventListener("change", renderList);
+        q.addEventListener("input", () => {
+            if (location.hash.startsWith("#article")) location.hash = "";
+            renderList();
+        });
+
+        /* ---------- Clicks ---------- */
+        const loginRequired = $("login-required");
+        loginRequired.addEventListener("click", e => {
+            if (e.target === loginRequired || e.target.closest("[data-close]")) loginRequired.close();
+        });
+
+        document.addEventListener("click", e => {
+            const t = e.target;
+            let el;
+            if ((el = t.closest("[data-share]"))) { e.preventDefault(); openShare(el.dataset.share); return; }
+            if ((el = t.closest("[data-save]"))) {
+                e.preventDefault();
+                member ? toggleSave(el.dataset.save) : loginRequired.showModal();
+                return;
+            }
+            // The whole row opens the article, not just the title and picture
+            if ((el = t.closest("[data-open]")) && !t.closest("a, button")) location.hash = "#article/" + el.dataset.open;
+        });
+
+        /* ---------- Router: list, or #article/<id> ---------- */
+        let listScroll = 0;
+
+        function route() {
+            const [page, id] = location.hash.slice(1).split("/");
+            const showArticle = page === "article" && byId[id];
+
+            document.querySelectorAll("[data-for]").forEach(el =>
+                el.hidden = el.dataset.for !== (showArticle ? "article" : "list"));
+
+            if (showArticle) {
+                $("article").innerHTML = articleHTML(byId[id]);
+                // The shared template links back to #home; here that means the list
+                $("article").querySelector(".back-link").textContent = "← Kembali ke semua semakan fakta";
+                $("more-list").innerHTML = moreList(id);
+                window.scrollTo(0, 0);
+            } else {
+                renderList();
+                window.scrollTo(0, listScroll);
+            }
+        }
+        window.addEventListener("hashchange", () => {
+            if (!location.hash.startsWith("#article")) return route();
+            listScroll = $("list").closest("main").hidden ? listScroll : window.scrollY;
+            route();
+        });
+
+        /* ---------- Init ---------- */
+        $("today").textContent = new Date().toLocaleDateString("ms-MY", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+        $("hot").innerHTML = hotList(hot);
+        route();
+    </script>
+</body>
+
+</html>
