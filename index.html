@@ -8,8 +8,7 @@
     <!-- Poppins for headings and body (tokens in style.css) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/webp" href="image/icon.png">
     <link rel="stylesheet" href="style.css">
@@ -71,40 +70,13 @@
         <section>
             <div class="section-head">
                 <h2 id="home-title">Semakan Fakta Terkini</h2>
-                <a href="allarticles.html" class="more">Lihat semua →</a>
             </div>
 
             <div id="hero"></div>
 
-            <div class="all-controls home-controls">
-                <div class="filters" id="verdict-filters" role="tablist">
-                    <button class="on" data-f="all">Semua</button>
-                    <button data-f="false">Palsu</button>
-                    <button data-f="mislead">Mengelirukan</button>
-                    <button data-f="true">Benar</button>
-                </div>
-
-                <!-- Filter by publication date -->
-                <div class="date-filter">
-                    <label class="select-wrap">
-                        <span class="sr-only">Tarikh diterbitkan</span>
-                        <select id="date-filter">
-                            <option value="all">Semua tarikh</option>
-                            <option value="1">24 jam lalu</option>
-                            <option value="7">7 hari lalu</option>
-                            <option value="30">30 hari lalu</option>
-                            <option value="custom">Pilih julat tarikh…</option>
-                        </select>
-                    </label>
-                    <div class="date-range" id="date-range" hidden>
-                        <label><span>Dari</span><input type="date" id="date-from"></label>
-                        <label><span>Hingga</span><input type="date" id="date-to"></label>
-                    </div>
-                </div>
-            </div>
-            <div class="date-note" id="date-note" hidden></div>
-
-            <div class="grid" id="grid"></div>
+            <div class="news-list" id="grid"></div>
+            <a href="allarticles.html" class="view-all" id="view-all">Lihat semua semakan fakta <span
+                    aria-hidden="true">→</span></a>
         </section>
 
         <aside>
@@ -326,63 +298,18 @@
         const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
         const q = $("q");
-        let verdictFilter = "all";
 
-        /* ---------- Date filter ---------- */
-        const DAY = 24 * HOUR;
-        const fmtDay = t => new Date(t).toLocaleDateString("ms-MY", { day: "numeric", month: "short", year: "numeric" });
-        const dayStart = v => new Date(v + "T00:00:00").getTime();
-
-        // { from, to, label } for the chosen period, or null for "Semua tarikh"
-        function dateRange() {
-            const v = $("date-filter").value;
-            if (v === "all") return null;
-            if (v !== "custom") return { from: Date.now() - v * DAY, to: Date.now(), label: $("date-filter").selectedOptions[0].text };
-            const from = $("date-from").value, to = $("date-to").value;
-            if (!from && !to) return null;
-            const r = { from: from ? dayStart(from) : 0, to: to ? dayStart(to) + DAY - 1 : Date.now() };
-            r.label = `${from ? fmtDay(r.from) : "awal"} – ${to ? fmtDay(r.to) : "hari ini"}`;
-            return r;
-        }
-
+        // Verdict and date filters live on allarticles.html; the home page lists the three newest matches
         function renderGrid() {
             const term = q.value.trim().toLowerCase();
-            const range = dateRange();
-            // With a date filter the top story joins the grid, like inside a topic
-            $("hero").hidden = !!topic || !!range;
-            const list = stories.filter(s => (range ? !topic || s.cat === topic : inTopic(s)) &&
-                (verdictFilter === "all" || s.v === verdictFilter) &&
-                (!range || (s.at >= range.from && s.at <= range.to)) &&
+            $("hero").hidden = !!topic;
+            const list = stories.filter(s => inTopic(s) &&
                 (!term || (s.title + " " + s.cat + " " + s.claim).toLowerCase().includes(term)));
 
-            $("date-note").hidden = !range;
-            if (range) $("date-note").innerHTML = `${list.length} semakan fakta · diterbitkan <b>${esc(range.label)}</b> <button class="link-btn" id="date-clear">Kosongkan</button>`;
-
             $("grid").innerHTML = list.length
-                ? list.map(card).join("")
-                : `<div class="empty">${range && !term ? "Tiada semakan fakta diterbitkan dalam tempoh ini." : emptyGridText(q.value.trim(), esc)}</div>`;
+                ? list.slice(0, 3).map(rowCard).join("")
+                : `<div class="empty">${emptyGridText(q.value.trim(), esc)}</div>`;
         }
-
-        $("date-filter").addEventListener("change", e => {
-            $("date-range").hidden = e.target.value !== "custom";
-            if (e.target.value === "custom") $("date-from").focus();
-            renderGrid();
-        });
-        ["date-from", "date-to"].forEach(id => $(id).addEventListener("change", () => {
-            // keep the range the right way round
-            if ($("date-from").value && $("date-to").value && $("date-from").value > $("date-to").value)
-                [$("date-from").value, $("date-to").value] = [$("date-to").value, $("date-from").value];
-            renderGrid();
-        }));
-        $("date-note").addEventListener("click", e => {
-            if (!e.target.closest("#date-clear")) return;
-            $("date-filter").value = "all";
-            $("date-from").value = $("date-to").value = "";
-            $("date-range").hidden = true;
-            renderGrid();
-        });
-        // Dates can't be in the future
-        $("date-from").max = $("date-to").max = new Date().toLocaleDateString("en-CA"); // local YYYY-MM-DD
 
         function renderArticle(id) {
             $("article").innerHTML = articleHTML(byId[id]);
@@ -458,15 +385,6 @@
             let el;
             if ((el = e.target.closest("[data-share]"))) { e.preventDefault(); openShare(el.dataset.share); return; }
             if (e.target.closest("[data-report]")) { e.preventDefault(); openReport(); }
-        });
-
-        $("verdict-filters").addEventListener("click", e => {
-            const b = e.target.closest("button");
-            if (!b) return;
-            $("verdict-filters").querySelector(".on").classList.remove("on");
-            b.classList.add("on");
-            verdictFilter = b.dataset.f;
-            renderGrid();
         });
 
         q.addEventListener("input", () => {

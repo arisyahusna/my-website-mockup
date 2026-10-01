@@ -4652,6 +4652,119 @@ footer nav a:hover {
   font-weight: 600;
 }
 
+/* ---------- Home: latest fact-checks as rows (rowCard in articles.js) ---------- */
+.news-list {
+  display: grid;
+  gap: 16px;
+}
+.news-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 24px;
+  align-items: center;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.news-row-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.news-row h4 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin-bottom: 12px;
+}
+.news-row h4 a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.news-row-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.news-row-bar {
+  width: 100px;
+  flex-shrink: 0;
+}
+.news-row-img {
+  display: block;
+  aspect-ratio: 16 / 11;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--brand-light);
+}
+.news-row-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+.news-row:hover .news-row-img img {
+  transform: scale(1.04);
+}
+.view-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+  height: 48px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--brand);
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.view-all:hover {
+  background: var(--brand-tint);
+  border-color: var(--brand-light);
+}
+.site-glass .news-row {
+  background: var(--glass);
+  border-color: var(--glass-line);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.site-glass .view-all {
+  background: var(--accent-grad);
+  border: 0;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(200, 50, 95, 0.22);
+}
+.site-glass .view-all:hover {
+  filter: brightness(1.08);
+}
+@media (max-width: 640px) {
+  .news-row {
+    grid-template-columns: minmax(0, 1fr) 104px;
+    gap: 14px;
+    padding: 14px;
+  }
+  .news-row h4 {
+    font-size: 16px;
+  }
+  .news-row-meta {
+    flex-wrap: wrap;
+  }
+}
+
 /* ==========================================================================
    Public site theme (body.site-glass: index, allarticles, info/*).
    Glass cards over soft colour fields. Soft tints #7bb3e1, #f8a9ba, #ffd88e;

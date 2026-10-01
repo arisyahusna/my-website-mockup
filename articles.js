@@ -44,6 +44,22 @@ function card(s) {
         </article>`;
 }
 
+// Home page list row: label and meta above the title, agreement bar below, image on the right
+function rowCard(s) {
+  return `
+        <article class="news-row">
+            <div class="news-row-body">
+                <div class="news-row-top"><span class="verdict v-${s.v}">${LABEL[s.v]}</span><span>${s.cat} · ${s.ago}</span></div>
+                <h4><a href="#article/${s.id}">${s.title}</a></h4>
+                <div class="news-row-meta">
+                    <span class="news-row-bar">${consensusBar(s)}</span>
+                    <span>${agreePct(s)}% ${LABEL[s.v].toLowerCase()} · ${s.n} sumber</span>
+                </div>
+            </div>
+            <a href="#article/${s.id}" class="news-row-img" tabindex="-1" aria-hidden="true"><img loading="lazy" src="${storyImg(s, 480, 300)}" alt=""></a>
+        </article>`;
+}
+
 function heroHTML(s) {
   return `
         <article class="hero">
