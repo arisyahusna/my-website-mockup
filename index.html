@@ -5,11 +5,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SEBENARNYA.MY</title>
-    <!-- ground.news uses licensed Universal Sans / Söhne; Inter Tight + Inter are the closest free equivalents -->
+    <!-- Poppins for headings and body (tokens in style.css) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/webp" href="image/icon.png">
     <link rel="stylesheet" href="style.css">
@@ -37,11 +37,6 @@
                 <img src="image/logo.png" alt="sebenarnya.my — Tidak Pasti Jangan Kongsi" class="logo-img">
             </a>
 
-            <nav class="links" aria-label="Navigasi utama">
-                <a href="#home" class="active" data-page="home">Utama</a>
-                <a href="#foryou" data-page="foryou">Untuk Anda</a>
-            </nav>
-
             <label class="search">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
                     <circle cx="11" cy="11" r="7" />
@@ -50,29 +45,29 @@
                 <input id="q" type="search" placeholder="Cari dakwaan, topik atau pautan…" autocomplete="off">
             </label>
 
-            <a href="general-public/userlogin.html" class="btn-login">Log masuk</a>
+            <button class="btn-login" data-report>Hantar dakwaan</button>
         </div>
     </header>
 
     <div class="cats">
         <div class="wrap">
-            <a href="#home" class="active" data-topic="">Berita Utama</a>
-            <a href="#topic/Politik" data-topic="Politik">Politik</a>
-            <a href="#topic/Kesihatan" data-topic="Kesihatan">Kesihatan</a>
-            <a href="#topic/Ekonomi" data-topic="Ekonomi">Ekonomi</a>
-            <a href="#topic/Penipuan" data-topic="Penipuan">Penipuan</a>
+            <a href="#home" class="active" data-topic="">Utama</a>
             <a href="#topic/Bencana" data-topic="Bencana">Bencana</a>
-            <a href="#topic/Teknologi" data-topic="Teknologi">Teknologi</a>
-            <a href="#topic/Agama" data-topic="Agama">Agama</a>
+            <a href="#topic/Ekonomi" data-topic="Ekonomi">Ekonomi</a>
+            <a href="#topic/Keselamatan" data-topic="Keselamatan">Keselamatan</a>
             <a href="#topic/Pendidikan" data-topic="Pendidikan">Pendidikan</a>
             <a href="#topic/Pengangkutan" data-topic="Pengangkutan">Pengangkutan</a>
-            <a href="#topic/Alam%20Sekitar" data-topic="Alam Sekitar">Alam Sekitar</a>
-            <a href="#topic/Video%20Tular" data-topic="Video Tular">Video Tular</a>
+            <a href="#topic/Urus%20Tadbir" data-topic="Urus Tadbir">Urus Tadbir</a>
+            <a href="#topic/Pilihanraya" data-topic="Pilihanraya">Pilihanraya</a>
+            <a href="#topic/Agama" data-topic="Agama">Agama</a>
+            <a href="#topic/Jenayah" data-topic="Jenayah">Jenayah</a>
+            <a href="#topic/Kesihatan" data-topic="Kesihatan">Kesihatan</a>
+            <a href="#topic/Kepenggunaan" data-topic="Kepenggunaan">Kepenggunaan</a>
         </div>
     </div>
 
-    <main class="wrap" id="page-home" data-for="home">
-        <!-- ===== Latest news ===== -->
+    <!-- ===== Home ===== -->
+    <main class="wrap" data-for="home">
         <section>
             <div class="section-head">
                 <h2 id="home-title">Semakan Fakta Terkini</h2>
@@ -81,17 +76,37 @@
 
             <div id="hero"></div>
 
-            <div class="filters" role="tablist">
-                <button class="on" data-f="all">Semua</button>
-                <button data-f="false">Palsu</button>
-                <button data-f="mislead">Mengelirukan</button>
-                <button data-f="true">Benar</button>
+            <div class="all-controls home-controls">
+                <div class="filters" id="verdict-filters" role="tablist">
+                    <button class="on" data-f="all">Semua</button>
+                    <button data-f="false">Palsu</button>
+                    <button data-f="mislead">Mengelirukan</button>
+                    <button data-f="true">Benar</button>
+                </div>
+
+                <!-- Filter by publication date -->
+                <div class="date-filter">
+                    <label class="select-wrap">
+                        <span class="sr-only">Tarikh diterbitkan</span>
+                        <select id="date-filter">
+                            <option value="all">Semua tarikh</option>
+                            <option value="1">24 jam lalu</option>
+                            <option value="7">7 hari lalu</option>
+                            <option value="30">30 hari lalu</option>
+                            <option value="custom">Pilih julat tarikh…</option>
+                        </select>
+                    </label>
+                    <div class="date-range" id="date-range" hidden>
+                        <label><span>Dari</span><input type="date" id="date-from"></label>
+                        <label><span>Hingga</span><input type="date" id="date-to"></label>
+                    </div>
+                </div>
             </div>
+            <div class="date-note" id="date-note" hidden></div>
 
             <div class="grid" id="grid"></div>
         </section>
 
-        <!-- ===== Hot / most searched ===== -->
         <aside>
             <div class="panel">
                 <h2>
@@ -126,6 +141,30 @@
                 <p>Hantarkan dakwaan, tangkapan skrin atau pautan kepada kami dan pasukan kami akan menyemaknya.</p>
                 <button data-report>Hantar dakwaan</button>
             </div>
+
+            <a href="info/info.html" class="side-card">
+                <span class="side-card-ic">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M12 11v5M12 8h.01" />
+                    </svg>
+                </span>
+                <span class="side-card-text">
+                    <b>Info &amp; Panduan</b>
+                    <small>Cara menangani penipuan, mengenal pasti berita palsu dan talian penting</small>
+                </span>
+                <span class="side-card-arrow" aria-hidden="true">→</span>
+            </a>
+
+            <a href="logo.html" class="side-card">
+                <span class="side-card-ic logo-ic"><img src="image/icon.png" alt=""></span>
+                <span class="side-card-text">
+                    <b>Logo sebenarnya.my</b>
+                    <small>Paparkan logo kami di laman web anda — muat turun percuma</small>
+                </span>
+                <span class="side-card-arrow" aria-hidden="true">→</span>
+            </a>
         </aside>
     </main>
 
@@ -148,119 +187,306 @@
         </aside>
     </main>
 
-    <!-- ===== For You (members only) ===== -->
-    <section class="wrap foryou" id="page-foryou" data-for="foryou" hidden>
-        <nav class="fy-tabs" role="tablist">
-            <button role="tab" class="on" data-tab="feed">Suapan Saya</button>
-            <button role="tab" data-tab="saved">Berita Disimpan</button>
-            <button role="tab" data-tab="reported">Kes Dilaporkan</button>
-        </nav>
-
-        <div class="fy-empty" data-panel="feed">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path
-                    d="M3 5a1 1 0 011-1h13a1 1 0 011 1v14a1 1 0 01-1 1H5a2 2 0 01-2-2V5zm3 2v4h5V7H6zm7 0v1.5h3V7h-3zm0 2.5V11h3V9.5h-3zM6 13v1.5h10V13H6zm0 3v1.5h10V16H6z" />
-                <path d="M19 8h1a1 1 0 011 1v9a2 2 0 01-2 2V8z" />
-            </svg>
-            <button class="fy-cta" data-auth="signup">Daftar dan Terokai Topik Baharu</button>
-        </div>
-
-        <div class="fy-empty" data-panel="saved" hidden>
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M6 2h12a1 1 0 011 1v19l-7-4.5L5 22V3a1 1 0 011-1z" />
-            </svg>
-            <button class="fy-cta" data-auth="signup">Daftar untuk Menyimpan Semakan Fakta</button>
-        </div>
-
-        <div class="fy-empty" data-panel="reported" hidden>
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M5 2a1 1 0 011 1v1h13l-2.5 5L19 14H6v7a1 1 0 11-2 0V3a1 1 0 011-1z" />
-            </svg>
-            <button class="fy-cta" data-auth="signup">Daftar untuk Menjejak Laporan Anda</button>
-        </div>
-    </section>
-
     <footer>
         <div class="wrap">
             <span>© 2023 - Suruhanjaya Komunikasi dan Multimedia Malaysia — Semak sebelum kongsi.</span>
         </div>
     </footer>
 
-    <dialog class="modal" id="login-required" aria-labelledby="login-required-title">
+    <!-- ===== Submit a claim ===== -->
+    <dialog class="modal form-modal" id="report-dialog" aria-labelledby="report-title">
         <button class="modal-close" data-close aria-label="Tutup">&times;</button>
-        <div class="modal-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round">
-                <rect x="5" y="11" width="14" height="10" rx="2" />
-                <path d="M8 11V7a4 4 0 018 0v4" />
-            </svg>
-        </div>
-        <h3 id="login-required-title">Log masuk diperlukan</h3>
-        <p>Anda perlu mendaftar dan log masuk ke sistem terlebih dahulu.</p>
-        <div class="modal-actions">
-            <button class="btn-secondary" data-auth="signup">Daftar</button>
-            <button class="btn-primary" data-auth="login">Log masuk</button>
+
+        <form id="report-form" novalidate>
+            <h3 id="report-title">Hantar dakwaan</h3>
+            <p>Beritahu kami apa yang anda lihat dan di mana. Pasukan kami akan menyemaknya dan memaklumkan
+                perkembangannya kepada anda.</p>
+
+            <div class="field">
+                <label for="r-claim">Apakah dakwaannya?</label>
+                <textarea id="r-claim" rows="3"
+                    placeholder="cth. Satu mesej mendakwa semua orang boleh menuntut RM500 dengan menekan pautan"
+                    required></textarea>
+                <small class="field-error" id="r-claim-error"></small>
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label for="r-platform">Di mana anda melihatnya?</label>
+                    <select id="r-platform">
+                        <option>WhatsApp</option>
+                        <option>Facebook</option>
+                        <option>TikTok</option>
+                        <option>X (Twitter)</option>
+                        <option>Telegram</option>
+                        <option>Instagram</option>
+                        <option>YouTube</option>
+                        <option>SMS</option>
+                        <option>Laman web</option>
+                        <option>Lain-lain</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="r-link">Pautan <span class="opt">(pilihan)</span></label>
+                    <input id="r-link" type="url" placeholder="https://">
+                    <small class="field-error" id="r-link-error"></small>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="r-file">Tangkapan skrin <span class="opt">(pilihan)</span></label>
+                <label class="file-drop">
+                    <input id="r-file" type="file" accept="image/*">
+                    <span id="r-file-name">Pilih imej atau lepaskan di sini</span>
+                </label>
+            </div>
+
+            <div class="field">
+                <label for="r-email">E-mel anda</label>
+                <input id="r-email" type="email" placeholder="nama@contoh.com" autocomplete="email" required>
+                <small class="field-hint">Nombor kes dan setiap kemas kini status akan dihantar ke e-mel ini.</small>
+                <small class="field-error" id="r-email-error"></small>
+            </div>
+
+            <div>
+                <p>Jika anda ingin melaporkan sebarang isu berkaitan sektor Komunikasi, aduan boleh dikemukakan secara
+                    terus kepada Jabatan Perlindungan dan Biro Aduan Pengguna MCMC melalui saluran berikut:</p>
+                <p>Portal Aduan : <a
+                        href="https://aduan.mcmc.gov.my/#/public/main">https://aduan.mcmc.gov.my/#/public/main </a><br>
+                    Talian Aduan : 1800 – 188 – 030<br>
+                    Faksimili : 03 – 8688 1880<br>
+                    Whatsapp : 016 – 220 6262<br>
+                    Emel : aduanskmm@mcmc.gov.my </p>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" data-close>Batal</button>
+                <button type="submit" class="btn-primary">Hantar dakwaan</button>
+            </div>
+        </form>
+
+        <div class="report-done" id="report-done" hidden>
+            <div class="modal-icon done">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M5 12.5l4.5 4.5L19 7.5" />
+                </svg>
+            </div>
+            <h3>Terima kasih, laporan anda telah diterima</h3>
+            <p>Nombor kes anda ialah <b id="done-id"></b>. Pengesahan telah dihantar ke <b id="done-email"></b>, dan
+                kami akan memaklumkan setiap kemas kini status melalui e-mel.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn-primary" data-close>Tutup</button>
+            </div>
         </div>
     </dialog>
 
+    <script src="storydata.js"></script>
     <script src="articles.js"></script>
     <script src="chatbot.js"></script>
     <script>
-        const $ = id => document.getElementById(id);
-        const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-        const q = $("q");
-        let filter = "all";
+        /* ---------- Submitted reports (localStorage stands in for the backend; cases.js reads them into the MCMC portal) ---------- */
+        // There are no user accounts: the reporter gets the case number and every status update by e-mail.
+        const STORE_KEY = "sbn-state-ms2";
+        const HOUR = 3600e3;
+        const RECEIVED_TEXT = "Kami telah menerima laporan anda dan memasukkannya ke dalam senarai semakan.";
 
-        function render() {
-            const term = q.value.trim().toLowerCase();
-            const list = stories.filter(s => inTopic(s) &&
-                (filter === "all" || s.v === filter) &&
-                (!term || (s.title + " " + s.cat + " " + s.claim).toLowerCase().includes(term)));
-            $("grid").innerHTML = list.length
-                ? list.map(card).join("")
-                : `<div class="empty">${emptyGridText(q.value.trim(), esc)}</div>`;
+        function seed() {
+            const now = Date.now();
+            return {
+                nextCase: 47,
+                reports: [
+                    {
+                        id: "SBN-2026-0046", claim: "Petua kesihatan yang dikongsi mendakwa air lemon suam boleh mencegah denggi", platform: "WhatsApp", link: "",
+                        email: "faridah.z@gmail.com", at: now - 5 * HOUR, status: "received",
+                        updates: [{ s: "received", text: RECEIVED_TEXT, at: now - 5 * HOUR }]
+                    },
+                    {
+                        id: "SBN-2026-0030", claim: "Video di TikTok mendakwa sebatang jalan runtuh di Kuala Lumpur semalam", platform: "TikTok", link: "",
+                        email: "kelvin.ong@yahoo.com", at: now - 30 * HOUR, status: "review",
+                        updates: [
+                            { s: "received", text: RECEIVED_TEXT, at: now - 30 * HOUR },
+                            { s: "review", text: "Pasukan kami sedang mengesahkan lokasi dan tarikh video tersebut.", at: now - 2 * HOUR }
+                        ]
+                    }
+                ]
+            };
         }
 
-        document.querySelectorAll(".filters button").forEach(b => b.addEventListener("click", () => {
-            document.querySelector(".filters .on").classList.remove("on");
-            b.classList.add("on");
-            filter = b.dataset.f;
-            render();
-        }));
+        let state;
+        try { state = JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) { }
+        if (!state || !Array.isArray(state.reports)) state = seed();
 
-        q.addEventListener("input", () => {
-            // Search within the current topic when already on the home view
-            if ($("page-home").hidden) location.hash = "#home";
-            render();
+        function persist() {
+            try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { }
+        }
+
+        /* ---------- Helpers ---------- */
+        const $ = id => document.getElementById(id);
+        const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+        const q = $("q");
+        let verdictFilter = "all";
+
+        /* ---------- Date filter ---------- */
+        const DAY = 24 * HOUR;
+        const fmtDay = t => new Date(t).toLocaleDateString("ms-MY", { day: "numeric", month: "short", year: "numeric" });
+        const dayStart = v => new Date(v + "T00:00:00").getTime();
+
+        // { from, to, label } for the chosen period, or null for "Semua tarikh"
+        function dateRange() {
+            const v = $("date-filter").value;
+            if (v === "all") return null;
+            if (v !== "custom") return { from: Date.now() - v * DAY, to: Date.now(), label: $("date-filter").selectedOptions[0].text };
+            const from = $("date-from").value, to = $("date-to").value;
+            if (!from && !to) return null;
+            const r = { from: from ? dayStart(from) : 0, to: to ? dayStart(to) + DAY - 1 : Date.now() };
+            r.label = `${from ? fmtDay(r.from) : "awal"} – ${to ? fmtDay(r.to) : "hari ini"}`;
+            return r;
+        }
+
+        function renderGrid() {
+            const term = q.value.trim().toLowerCase();
+            const range = dateRange();
+            // With a date filter the top story joins the grid, like inside a topic
+            $("hero").hidden = !!topic || !!range;
+            const list = stories.filter(s => (range ? !topic || s.cat === topic : inTopic(s)) &&
+                (verdictFilter === "all" || s.v === verdictFilter) &&
+                (!range || (s.at >= range.from && s.at <= range.to)) &&
+                (!term || (s.title + " " + s.cat + " " + s.claim).toLowerCase().includes(term)));
+
+            $("date-note").hidden = !range;
+            if (range) $("date-note").innerHTML = `${list.length} semakan fakta · diterbitkan <b>${esc(range.label)}</b> <button class="link-btn" id="date-clear">Kosongkan</button>`;
+
+            $("grid").innerHTML = list.length
+                ? list.map(card).join("")
+                : `<div class="empty">${range && !term ? "Tiada semakan fakta diterbitkan dalam tempoh ini." : emptyGridText(q.value.trim(), esc)}</div>`;
+        }
+
+        $("date-filter").addEventListener("change", e => {
+            $("date-range").hidden = e.target.value !== "custom";
+            if (e.target.value === "custom") $("date-from").focus();
+            renderGrid();
+        });
+        ["date-from", "date-to"].forEach(id => $(id).addEventListener("change", () => {
+            // keep the range the right way round
+            if ($("date-from").value && $("date-to").value && $("date-from").value > $("date-to").value)
+                [$("date-from").value, $("date-to").value] = [$("date-to").value, $("date-from").value];
+            renderGrid();
+        }));
+        $("date-note").addEventListener("click", e => {
+            if (!e.target.closest("#date-clear")) return;
+            $("date-filter").value = "all";
+            $("date-from").value = $("date-to").value = "";
+            $("date-range").hidden = true;
+            renderGrid();
+        });
+        // Dates can't be in the future
+        $("date-from").max = $("date-to").max = new Date().toLocaleDateString("en-CA"); // local YYYY-MM-DD
+
+        function renderArticle(id) {
+            $("article").innerHTML = articleHTML(byId[id]);
+            $("more-list").innerHTML = moreList(id);
+        }
+
+        /* ---------- Dialogs ---------- */
+        document.querySelectorAll("dialog").forEach(d => {
+            d.addEventListener("click", e => {
+                if (e.target === d || e.target.closest("[data-close]")) d.close();
+            });
         });
 
-        document.querySelectorAll(".fy-tabs button").forEach(tab => tab.addEventListener("click", () => {
-            document.querySelectorAll(".fy-tabs button").forEach(t => t.classList.toggle("on", t === tab));
-            document.querySelectorAll(".fy-empty").forEach(p => p.hidden = p.dataset.panel !== tab.dataset.tab);
-        }));
+        // Report form
+        const reportDialog = $("report-dialog");
+        const reportForm = $("report-form");
+        const FILE_PROMPT = "Pilih imej atau lepaskan di sini";
+        const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        const AUTH_PAGES = { signup: "general-public/userregister.html", login: "general-public/userlogin.html" };
-        document.querySelectorAll("[data-auth]").forEach(b => b.addEventListener("click", () => {
-            location.href = AUTH_PAGES[b.dataset.auth];
-        }));
+        function openReport() {
+            reportForm.reset();
+            reportForm.hidden = false;
+            $("report-done").hidden = true;
+            $("r-file-name").textContent = FILE_PROMPT;
+            ["r-claim", "r-link", "r-email"].forEach(id => { $(id).classList.remove("invalid"); $(id + "-error").textContent = ""; });
+            reportDialog.showModal();
+            $("r-claim").focus();
+        }
 
-        // Visitors can read and share; saving and reporting need an account
-        const loginRequired = $("login-required");
+        $("r-file").addEventListener("change", e => {
+            $("r-file-name").textContent = e.target.files[0] ? e.target.files[0].name : FILE_PROMPT;
+        });
+
+        function fieldError(id, msg) {
+            $(id).classList.toggle("invalid", !!msg);
+            $(id + "-error").textContent = msg;
+            return !msg;
+        }
+
+        reportForm.addEventListener("submit", e => {
+            e.preventDefault();
+            const claim = $("r-claim").value.trim();
+            const link = $("r-link").value.trim();
+            const email = $("r-email").value.trim();
+
+            let linkErr = "";
+            if (link) { try { new URL(link); } catch (err) { linkErr = "Masukkan pautan penuh yang bermula dengan https://"; } }
+            const ok = [
+                fieldError("r-claim", claim.length < 10 ? "Sila terangkan dakwaan tersebut dalam beberapa perkataan (sekurang-kurangnya 10 aksara)." : ""),
+                fieldError("r-link", linkErr),
+                fieldError("r-email", !email ? "E-mel diperlukan untuk menerima kemas kini kes." : !EMAIL_RE.test(email) ? "Masukkan alamat e-mel yang sah." : ""),
+            ].every(Boolean);
+            if (!ok) return;
+
+            // TODO: POST the report (and screenshot) to the backend; it returns the case number and e-mails the reporter
+            const now = Date.now();
+            const report = {
+                id: "SBN-2026-" + String(state.nextCase++).padStart(4, "0"),
+                claim, link, email, platform: $("r-platform").value, at: now, status: "received",
+                updates: [{ s: "received", text: RECEIVED_TEXT, at: now }]
+            };
+            state.reports.unshift(report);
+            persist();
+
+            $("done-id").textContent = report.id;
+            $("done-email").textContent = email;
+            reportForm.hidden = true;
+            $("report-done").hidden = false;
+        });
+
+        /* ---------- Clicks (delegated) ---------- */
         document.addEventListener("click", e => {
             let el;
             if ((el = e.target.closest("[data-share]"))) { e.preventDefault(); openShare(el.dataset.share); return; }
-            if (e.target.closest("[data-save], [data-report]")) { e.preventDefault(); loginRequired.showModal(); }
-        });
-        loginRequired.addEventListener("click", e => {
-            if (e.target === loginRequired || e.target.closest("[data-close]")) loginRequired.close();
+            if (e.target.closest("[data-report]")) { e.preventDefault(); openReport(); }
         });
 
-        /* ---------- Router: #home, #topic/<name>, #foryou, #article/<id> ---------- */
+        $("verdict-filters").addEventListener("click", e => {
+            const b = e.target.closest("button");
+            if (!b) return;
+            $("verdict-filters").querySelector(".on").classList.remove("on");
+            b.classList.add("on");
+            verdictFilter = b.dataset.f;
+            renderGrid();
+        });
+
+        q.addEventListener("input", () => {
+            // Search within the current topic when already on the home view
+            if (document.querySelector('[data-for="home"]').hidden) location.hash = "#home";
+            renderGrid();
+        });
+
+        /* ---------- Router: #home, #topic/<name>, #article/<id>, #hantar ---------- */
         function route() {
             let [page, sub] = location.hash.slice(1).split("/");
+            // #hantar opens the claim form (used by links from other pages, e.g. allarticles.html)
+            if (page === "hantar") {
+                history.replaceState(null, "", location.pathname + location.search + "#home");
+                page = "home";
+                setTimeout(openReport);
+            }
             const topicName = page === "topic" ? decodeURIComponent(sub || "") : "";
             if (page === "topic") page = "home";
-            if (!["home", "foryou", "article"].includes(page)) page = "home";
+            if (!["home", "article"].includes(page)) page = "home";
             if (page === "article" && !byId[sub]) page = "home";
 
             document.querySelectorAll("[data-for]").forEach(el => el.hidden = el.dataset.for !== page);
@@ -268,27 +494,24 @@
 
             if (page === "home") {
                 applyTopic(topicName);
-                render();
+                renderGrid();
             }
-            if (page === "article") {
-                $("article").innerHTML = articleHTML(byId[sub]);
-                $("more-list").innerHTML = moreList(sub);
-            }
+            if (page === "article") renderArticle(sub);
             window.scrollTo(0, 0);
         }
         window.addEventListener("hashchange", route);
 
-        $("today").textContent = new Date().toLocaleDateString("ms-MY", {
-            weekday: "long", day: "numeric", month: "long", year: "numeric"
-        });
+        /* ---------- Init ---------- */
+        $("today").textContent = new Date().toLocaleDateString("ms-MY", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
         // Arriving from another page (e.g. extension.html) with a search
         const params = new URLSearchParams(location.search);
         if (params.get("q")) q.value = params.get("q");
 
-        $("hero").innerHTML = heroHTML(byId[HERO_ID]);
+        if (HERO_ID) $("hero").innerHTML = heroHTML(byId[HERO_ID]);
+        // Show changes from the Content Publisher (another tab) straight away
+        window.addEventListener("storage", e => { if (e.key === SITE_KEY) location.reload(); });
         $("hot").innerHTML = hotList(hot);
-        render();
         route();
     </script>
 </body>

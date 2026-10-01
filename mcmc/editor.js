@@ -2,6 +2,7 @@
    Case data and workflow live in ../cases.js; shared UI in staff.js. */
 
 const me = startSession("mcmc-editor", EDITOR);
+const drawBell = bellInit("mcmc:editor");
 
 const enteredAt = (c) => (c.history.filter((h) => h.to === "editorial").pop() || {}).at || c.receivedAt;
 const signedAt = (c) => (c.history.filter((h) => h.from === "editorial" && h.to === "penerbitan").pop() || {}).at || 0;
@@ -18,6 +19,7 @@ function draftState(c) {
 
 function commit(msg) {
   saveStore();
+  drawBell();
   $("nav-queue").textContent = queue().length || "";
   if (msg) toast(msg);
 }
@@ -43,6 +45,7 @@ function renderQueue() {
     <div class="section-title"><h2>Baris gilir editorial</h2><span>${q ? `Carian “${esc(q)}” · ${list.length} keputusan` : "Keutamaan tinggi dan kes paling lama di atas"}</span></div>
     ${caseTable(list, [
       ["ID kes", (c) => `<span class="mono">${c.id}</span>`],
+      ["Jenis kes", (c) => typeBadge(c.type)],
       ["Kandungan", claimCell],
       ["Keputusan", (c) => verdictBadge(ensureContent(c).verdict)],
       ["Agensi", agencyTags],
@@ -58,6 +61,7 @@ function renderSent() {
   const q = searchQ(), list = sentList().filter((c) => matches(c, q));
   $("view-sent").innerHTML = caseTable(list, [
     ["ID kes", (c) => `<span class="mono">${c.id}</span>`],
+    ["Jenis kes", (c) => typeBadge(c.type)],
     ["Kandungan", claimCell],
     ["Keputusan", (c) => verdictBadge(ensureContent(c).verdict)],
     ["Diserahkan", (c) => fmtDT(signedAt(c))],
@@ -287,7 +291,7 @@ function shrinkImage(file, done) {
 }
 
 /* ---------- Router ---------- */
-const TITLES = { queue: "Baris gilir editorial", sent: "Telah diserahkan", activity: "Log aktiviti" };
+const TITLES = { queue: "Baris gilir editorial", sent: "Telah diserahkan", activity: "Log aktiviti", account: "Akaun saya" };
 
 function route() {
   const [view, id] = location.hash.slice(1).split("/");
@@ -300,6 +304,7 @@ function route() {
   if (v === "sent") renderSent();
   if (v === "case") renderCase(decodeURIComponent(id));
   if (v === "activity") activityView(me, $("view-activity"));
+  if (v === "account") accountView(me, $("view-account"), me.roleId, me.agency);
 }
 window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
 

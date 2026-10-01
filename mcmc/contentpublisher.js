@@ -2,6 +2,7 @@
    Case data and workflow live in ../cases.js; shared UI in staff.js. */
 
 const me = startSession("mcmc-publisher", PUBLISHER);
+const drawBell = bellInit("mcmc:publisher");
 
 const signedAt = (c) => (c.signoff && c.signoff.at) || (c.history.filter((h) => h.to === "penerbitan").pop() || {}).at || 0;
 const ready = () => store.cases.filter((c) => c.status === "penerbitan" && !c.schedule).sort((a, b) => (b.priority === "Tinggi") - (a.priority === "Tinggi") || signedAt(a) - signedAt(b));
@@ -16,6 +17,7 @@ const channelTags = (ids) => ids.length === CHANNELS.length
 
 function commit(msg) {
   saveStore();
+  drawBell();
   $("nav-ready").textContent = ready().length || "";
   $("nav-scheduled").textContent = scheduled().length || "";
   if (msg) toast(msg);
@@ -40,6 +42,7 @@ function renderReady() {
     <div class="section-title"><h2>Sedia diterbitkan</h2><span>${q ? `Carian “${esc(q)}” · ${list.length} keputusan` : "Kandungan yang telah diluluskan sepenuhnya oleh agensi, MCMC Admin dan Editor"}</span></div>
     ${caseTable(list, [
       ["ID kes", (c) => `<span class="mono">${c.id}</span>`],
+      ["Jenis kes", (c) => typeBadge(c.type)],
       ["Kandungan", claimCell],
       ["Keputusan", (c) => verdictBadge(c.content.verdict)],
       ["Ditandatangani", (c) => `${fmtDT(signedAt(c))}<br><small class="kpi-delta">${esc(c.signoff ? c.signoff.by : "")}</small>`],
@@ -53,6 +56,7 @@ function renderScheduled() {
   const q = searchQ(), list = scheduled().filter((c) => matches(c, q));
   $("view-scheduled").innerHTML = caseTable(list, [
     ["ID kes", (c) => `<span class="mono">${c.id}</span>`],
+    ["Jenis kes", (c) => typeBadge(c.type)],
     ["Kandungan", claimCell],
     ["Jadual", (c) => `<b style="white-space:nowrap">${whenText(c.schedule.at)}</b><br><small class="kpi-delta">${ago(c.schedule.at)}</small>`],
     ["Saluran", (c) => channelTags(c.schedule.channels)],
@@ -65,6 +69,7 @@ function renderPublished() {
   const q = searchQ(), list = published().filter((c) => matches(c, q));
   $("view-published").innerHTML = caseTable(list, [
     ["ID kes", (c) => `<span class="mono">${c.id}</span>`],
+    ["Jenis kes", (c) => typeBadge(c.type)],
     ["Kandungan", claimCell],
     ["Keputusan", (c) => verdictBadge(c.content.verdict)],
     ["Diterbitkan", (c) => `${fmtDT(c.published.at)}<br><small class="kpi-delta">${c.published.scheduled ? "mengikut jadual" : "serta-merta"}</small>`],
@@ -261,7 +266,7 @@ function bindPublish(c) {
       setTimeout(() => {
         publishCase(c, { channels: s.channels, notify: s.notify }, me);
         delete pubState[c.id];
-        redraw(s.notify ? "Diterbitkan — pelapor telah dimaklumkan" : "Diterbitkan");
+        redraw(s.notify ? "Diterbitkan di laman utama — pelapor telah dimaklumkan" : "Diterbitkan di laman utama");
       }, 900);
     });
     act("show-return", () => { $("return-form").hidden = false; $("f-reason").focus(); });
@@ -275,7 +280,7 @@ function bindPublish(c) {
   }
 
   // scheduled
-  act("publish-now", () => { const sc = c.schedule; cancelSchedule(c, me); publishCase(c, { channels: sc.channels, notify: sc.notify }, me); redraw("Diterbitkan sekarang"); });
+  act("publish-now", () => { const sc = c.schedule; cancelSchedule(c, me); publishCase(c, { channels: sc.channels, notify: sc.notify }, me); redraw("Diterbitkan sekarang di laman utama"); });
   act("reschedule", () => {
     const t = new Date($("f-resched").value).getTime();
     if (!(t > Date.now() + 5 * MIN)) return toast("Pilih masa sekurang-kurangnya 5 minit dari sekarang");
@@ -290,26 +295,34 @@ function bindPublish(c) {
 }
 
 /* ---------- Router ---------- */
-const TITLES = { ready: "Sedia diterbitkan", scheduled: "Dijadualkan", published: "Diterbitkan", activity: "Log aktiviti" };
+const TITLES = { ready: "Sedia diterbitkan", scheduled: "Dijadualkan", published: "Diterbitkan", site: "Laman awam", info: "Info & Panduan", activity: "Log aktiviti", account: "Akaun saya" };
 
 function route() {
   const [view, id] = location.hash.slice(1).split("/");
-  const v = view === "case" && id ? "case" : TITLES[view] ? view : "ready";
+  const v = ["case", "guide", "story"].includes(view) && id ? view : TITLES[view] ? view : "ready";
+  const parent = { guide: "info", story: "site" }[v] || v;
+  if (v !== "guide") guideDraft = null; // leaving an editor discards unsaved changes
+  if (v !== "story") storyDraft = null;
   document.querySelectorAll(".adm-view").forEach((s) => (s.hidden = s.dataset.view !== v));
-  document.querySelectorAll(".adm-nav a").forEach((a) => a.classList.toggle("active", a.dataset.view === v));
-  $("crumb").textContent = v === "case" ? "Penerbitan" : "MCMC Content Publisher";
+  document.querySelectorAll(".adm-nav a").forEach((a) => a.classList.toggle("active", a.dataset.view === parent));
+  $("crumb").textContent = v === "case" ? "Penerbitan" : parent !== v ? TITLES[parent] : "MCMC Content Publisher";
   $("page-title").textContent = TITLES[v] || "";
+  if (v === "site") renderSite();
+  if (v === "story") renderStoryEditor(decodeURIComponent(id));
+  if (v === "info") renderInfoAdmin();
+  if (v === "guide") renderGuideEditor(decodeURIComponent(id));
   if (v === "ready") renderReady();
   if (v === "scheduled") renderScheduled();
   if (v === "published") renderPublished();
   if (v === "case") renderCase(decodeURIComponent(id));
   if (v === "activity") activityView(me, $("view-activity"));
+  if (v === "account") accountView(me, $("view-account"), me.roleId, me.agency);
 }
 window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
 
 $("global-q").addEventListener("input", () => {
   const v = location.hash.slice(1);
-  if (["scheduled", "published"].includes(v)) route();
+  if (["scheduled", "published", "site"].includes(v)) route();
   else if (v && v !== "ready") location.hash = "#ready";
   else renderReady();
 });

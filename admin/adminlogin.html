@@ -7,8 +7,7 @@
     <title>Log Masuk Pentadbir | SEBENARNYA.MY</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/webp" href="../image/icon.png">
     <link rel="stylesheet" href="../style.css">
@@ -20,10 +19,7 @@
 
     <header class="auth-top">
         <div class="wrap">
-            <a href="../index.html" class="logo" aria-label="Laman utama sebenarnya.my">
-                <img src="../image/logo.png" alt="sebenarnya.my — Tidak Pasti Jangan Kongsi" class="logo-img">
-            </a>
-            <a href="../index.html" class="auth-back">Utama</a>
+            <img src="../image/logo.png" alt="sebenarnya.my — Tidak Pasti Jangan Kongsi" class="logo-img">
         </div>
     </header>
 
@@ -45,6 +41,8 @@
                 <div id="step-role">
                     <h1>Log masuk pentadbir</h1>
                     <p class="auth-sub">Pilih peranan anda untuk meneruskan.</p>
+                    <div class="auth-alert error" id="inactive-note" role="alert" hidden>Akaun anda tidak aktif dan
+                        telah dilog keluar. Hubungi MCMC Admin untuk mengaktifkan semula akaun anda.</div>
 
                     <!-- To add a role, copy one of the buttons below and change data-role, the icon and the text -->
                     <div class="role-group-label">MCMC</div>
@@ -162,16 +160,18 @@
                         <button type="submit" class="auth-submit">Log masuk</button>
                     </form>
                 </div>
-
-                <p class="auth-switch">Bukan kakitangan? <a href="../general-public/userlogin.html">Log masuk
-                        pengguna awam</a></p>
             </section>
         </div>
     </main>
 
+    <script src="../storydata.js"></script>
+    <script src="../cases.js"></script>
+    <script src="../users.js"></script>
     <script>
         const $ = id => document.getElementById(id);
         const form = $("admin-form");
+        // Sent here after an account was deactivated during a session (users.js guardActive)
+        $("inactive-note").hidden = new URLSearchParams(location.search).get("akaun") !== "tidak-aktif";
         const email = $("email");
         const password = $("password");
         const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -233,6 +233,19 @@
             e.preventDefault();
             $("form-error").hidden = true;
             if (!validate()) return;
+
+            // Known accounts must be active and have the chosen role (users.js); unknown e-mails still work for the demo
+            loadUsers();
+            const acct = findUser(email.value.trim());
+            const refuse = msg => { $("form-error").textContent = msg; $("form-error").hidden = false; };
+            if (acct && acct.status !== "aktif") {
+                loadStore();
+                audit({ name: acct.email, role: roleLabel(acct) }, "Log masuk gagal", "Portal pentadbir", "Akaun tidak aktif");
+                saveStore();
+                return refuse("Akaun ini tidak aktif. Hubungi MCMC Admin untuk mengaktifkan semula akaun anda.");
+            }
+            if (acct && acct.role !== role.id) return refuse(`Akaun ini didaftarkan sebagai ${ROLES[acct.role].label}. Pilih peranan yang betul.`);
+            if (acct) { acct.lastLogin = Date.now(); saveUsers(); }
 
             // TODO: send { role, email, password } to the backend; it must check the account really has this role.
             // No database yet, so any valid input "logs in".

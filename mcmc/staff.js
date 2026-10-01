@@ -40,6 +40,11 @@ function startSession(roleId, fallback, accept = () => true) {
     const s = JSON.parse(localStorage.getItem("sbn-admin"));
     if (s && s.email && s.role === roleId && accept(s.email)) me.name = s.email;
   } catch (e) { }
+  // Deactivated accounts are signed out (users.js); otherwise make sure the account exists for "Akaun saya"
+  me.roleId = roleId;
+  me.agency = (me.role.match(/· (\S+)$/) || [])[1] || null;
+  if (!guardActive(me.name)) throw new Error("Akaun tidak aktif");
+  ensureUser(me, roleId, me.agency);
   try {
     if (!sessionStorage.getItem("sbn-admin-session")) {
       audit(me, "Log masuk", "Portal pentadbir", "Log masuk berjaya");
@@ -61,8 +66,9 @@ function bindShell(me, rerender) {
     location.href = "../admin/adminlogin.html";
   });
   $("reset-demo").addEventListener("click", () => {
-    if (!confirm("Tetapkan semula semua kes demo dan log audit kepada keadaan asal?")) return;
+    if (!confirm("Tetapkan semula semua kes demo, akaun pengguna dan log audit kepada keadaan asal?")) return;
     resetStore();
+    resetUsers();
     saveStore();
     toast("Demo ditetapkan semula");
     rerender();
@@ -100,13 +106,13 @@ function cardSVG(c) {
   return `<svg viewBox="0 0 600 314" role="img" aria-label="Kad semakan fakta: ${esc(VERDICTS[ct.verdict])} — ${esc(ct.title)}" xmlns="http://www.w3.org/2000/svg">
     <rect width="600" height="314" fill="#fff"/><rect width="600" height="314" fill="${ink}" opacity="0.06"/>
     <rect width="10" height="314" fill="${ink}"/>
-    <text x="40" y="52" font-family="Inter Tight, sans-serif" font-size="14" font-weight="700" letter-spacing="2" fill="#4a4f5c">SEMAKAN FAKTA</text>
+    <text x="40" y="52" font-family="Poppins, sans-serif" font-size="14" font-weight="700" letter-spacing="2" fill="#4a4f5c">SEMAKAN FAKTA</text>
     <rect x="40" y="70" rx="6" width="${VERDICTS[ct.verdict].length * 15 + 34}" height="36" fill="${ink}"/>
-    <text x="57" y="95" font-family="Inter Tight, sans-serif" font-size="19" font-weight="800" letter-spacing="1.5" fill="#fff">${esc(VERDICTS[ct.verdict].toUpperCase())}</text>
-    ${lines.map((l, i) => `<text x="40" y="${148 + i * 30}" font-family="Inter Tight, sans-serif" font-size="23" font-weight="800" fill="#111318">${esc(l)}</text>`).join("")}
+    <text x="57" y="95" font-family="Poppins, sans-serif" font-size="19" font-weight="800" letter-spacing="1.5" fill="#fff">${esc(VERDICTS[ct.verdict].toUpperCase())}</text>
+    ${lines.map((l, i) => `<text x="40" y="${148 + i * 30}" font-family="Poppins, sans-serif" font-size="23" font-weight="800" fill="#111318">${esc(l)}</text>`).join("")}
     <line x1="40" x2="560" y1="272" y2="272" stroke="#e6e8ee"/>
-    <text x="40" y="296" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#0075c9">sebenarnya.my</text>
-    <text x="560" y="296" text-anchor="end" font-family="Inter, sans-serif" font-size="12" fill="#8a8f9c">Tidak Pasti Jangan Kongsi · ${esc(c.id)}</text>
+    <text x="40" y="296" font-family="Poppins, sans-serif" font-size="13" font-weight="700" fill="#0075c9">sebenarnya.my</text>
+    <text x="560" y="296" text-anchor="end" font-family="Poppins, sans-serif" font-size="12" fill="#8a8f9c">Tidak Pasti Jangan Kongsi · ${esc(c.id)}</text>
   </svg>`;
 }
 
@@ -117,8 +123,8 @@ function evidenceSVG(name) {
     <rect width="600" height="314" fill="#f7f8fa"/><rect width="600" height="314" fill="url(#hatch)"/>
     <rect x="200" y="92" width="200" height="130" rx="14" fill="#fff" stroke="#e6e8ee"/>
     <path d="M285 128l-22 22a14 14 0 0020 20l28-28a9 9 0 00-13-13l-27 27a4 4 0 006 6l22-22" fill="none" stroke="#8a8f9c" stroke-width="4" stroke-linecap="round"/>
-    <text x="300" y="196" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#4a4f5c">${esc(name)}</text>
-    <text x="300" y="250" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#8a8f9c">Bukti daripada pelapor</text>
+    <text x="300" y="196" text-anchor="middle" font-family="Poppins, sans-serif" font-size="13" font-weight="600" fill="#4a4f5c">${esc(name)}</text>
+    <text x="300" y="250" text-anchor="middle" font-family="Poppins, sans-serif" font-size="12" fill="#8a8f9c">Bukti daripada pelapor</text>
   </svg>`;
 }
 
@@ -153,7 +159,7 @@ function articlePreview(c) {
 function caseHead(c) {
   const facts = [
     ["Pelapor", esc(c.reporter)], ["Dilihat di", esc(c.platform)], ["Diterima", `${fmtDT(c.receivedAt)}`],
-    ["Jenis kes", esc(c.type || "—")], ["Domain", c.domains.map((d) => `<span class="chip-tag">${esc(d)}</span>`).join("") || "—"],
+    ["Jenis kes", typeBadge(c.type)], ["Domain", c.domains.map((d) => `<span class="chip-tag">${esc(d)}</span>`).join("") || "—"],
     ["Agensi", agencyTags(c)],
   ];
   return `<div class="card">

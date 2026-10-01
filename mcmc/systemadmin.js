@@ -29,6 +29,10 @@ try {
   const s = JSON.parse(localStorage.getItem("sbn-admin"));
   if (s && s.email) me.name = s.email;
 } catch (e) { }
+me.roleId = "mcmc-admin";
+// Deactivated accounts are signed out straight away (users.js)
+if (!guardActive(me.name)) throw new Error("Akaun tidak aktif");
+ensureUser(me, me.roleId, null);
 try {
   if (!sessionStorage.getItem("sbn-admin-session")) {
     audit(me, "Log masuk", "Portal pentadbir", "Log masuk berjaya");
@@ -38,6 +42,7 @@ try {
 } catch (e) { }
 $("me-email").textContent = me.name;
 $("me-avatar").textContent = me.name[0].toUpperCase();
+const drawBell = bellInit("mcmc:admin");
 
 /* ---------- Sample analytics (deterministic) ---------- */
 const MONTHS = ["Okt 2025", "Nov 2025", "Dis 2025", "Jan 2026", "Feb 2026", "Mac 2026", "Apr 2026", "Mei 2026", "Jun 2026", "Jul 2026", "Ogo 2026", "Sep 2026"];
@@ -297,6 +302,7 @@ function updateNavBadge() {
 }
 function commit(msg) {
   saveStore();
+  drawBell();
   updateNavBadge();
   if (msg) toast(msg);
 }
@@ -442,6 +448,7 @@ let dashDraws = null;
 
 /* ---------- Case queue ---------- */
 let caseTab = "mine";
+let caseType = "";
 const CASE_TABS = [
   ["mine", "Perlu tindakan saya", (c) => ADMIN_STAGES.includes(c.status)],
   ["agency", "Semakan agensi", (c) => c.status === "semakan_agensi"],
@@ -454,27 +461,33 @@ const CASE_TABS = [
 function renderCases() {
   const q = $("global-q").value.trim().toLowerCase();
   const tabFn = CASE_TABS.find((t) => t[0] === caseTab)[2];
-  const list = store.cases.filter((c) => tabFn(c) && (!q || `${c.id} ${c.claim} ${c.reporter} ${c.platform}`.toLowerCase().includes(q)));
+  const list = store.cases.filter((c) => tabFn(c) && (!caseType || c.type === caseType) && (!q || `${c.id} ${c.claim} ${c.reporter} ${c.platform}`.toLowerCase().includes(q)));
   $("view-cases").innerHTML = `
     <div class="tabs" role="tablist">${CASE_TABS.map(([k, label, fn]) =>
       `<button role="tab" data-tab="${k}" class="${k === caseTab ? "on" : ""}">${label}<span class="count">${store.cases.filter(fn).length}</span></button>`).join("")}</div>
+    <div class="filter-row type-filter" role="group" aria-label="Tapis mengikut jenis kes">
+      <label>Jenis kes</label>
+      ${["", ...CASE_TYPES].map((t) => `<button class="type-chip ${t ? `ct-${typeSlug(t)}` : ""} ${t === caseType ? "on" : ""}" data-ctype="${esc(t)}">${t ? esc(t) : "Semua"}<span>${store.cases.filter((c) => tabFn(c) && (!t || c.type === t)).length}</span></button>`).join("")}
+    </div>
     ${q ? `<p class="kpi-delta" style="margin-bottom:10px">Carian: “${esc(q)}” · ${list.length} keputusan</p>` : ""}
     <div class="card" style="padding:4px 8px"><div class="table-wrap">
       <table class="adm-table">
-        <thead><tr><th>ID kes</th><th>Dakwaan</th><th>Diterima</th><th>Peringkat</th><th>Agensi</th><th>SLA</th><th>Keutamaan</th></tr></thead>
+        <thead><tr><th>ID kes</th><th>Dakwaan</th><th>Diterima</th><th>Jenis kes</th><th>Peringkat</th><th>Agensi</th><th>SLA</th><th>Keutamaan</th></tr></thead>
         <tbody>${list.length ? list.map((c) => {
           const sla = worstSla(c);
           return `<tr class="clickable" data-case="${c.id}" tabindex="0">
             <td class="mono">${c.id}</td>
             <td class="claim-cell"><b>${esc(c.claim)}</b><small>${esc(c.reporter)} · ${esc(c.platform)}${c.fromPublic ? " · dari laman awam" : ""}</small></td>
             <td title="${fmtDT(c.receivedAt)}">${ago(c.receivedAt)}</td>
+            <td>${typeBadge(c.type)}</td>
             <td>${stageBadge(c.status)}</td>
             <td>${c.assignments.map((a) => `<span class="chip-tag">${a.agency}</span>`).join("") || "—"}</td>
             <td>${sla ? slaBadge(sla) : "—"}</td>
             <td><span class="prio ${esc(c.priority)}">${esc(c.priority)}</span></td></tr>`;
-        }).join("") : `<tr><td colspan="7" class="empty-row">Tiada kes dalam senarai ini.</td></tr>`}</tbody>
+        }).join("") : `<tr><td colspan="8" class="empty-row">Tiada kes dalam senarai ini.</td></tr>`}</tbody>
       </table></div></div>`;
   $("view-cases").querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => { caseTab = b.dataset.tab; renderCases(); }));
+  $("view-cases").querySelectorAll("[data-ctype]").forEach((b) => b.addEventListener("click", () => { caseType = b.dataset.ctype; renderCases(); }));
   $("view-cases").querySelectorAll("[data-case]").forEach((tr) => {
     const open = () => (location.hash = `#case/${tr.dataset.case}`);
     tr.addEventListener("click", open);
@@ -500,7 +513,9 @@ function renderCase(id) {
   const facts = [
     ["Pelapor", esc(c.reporter)], ["Saluran", esc(c.channel)], ["Dilihat di", esc(c.platform)],
     ["Diterima", `${fmtDT(c.receivedAt)} <small class="kpi-delta">(${ago(c.receivedAt)})</small>`],
-    ["Jenis kes", esc(c.type || "—")], ["Domain", c.domains.map((d) => `<span class="chip-tag">${esc(d)}</span>`).join("") || "—"],
+    // once classified, the type can be changed at any time (e.g. to "Selesai")
+    ["Jenis kes", c.type ? `<span class="retype">${typeBadge(c.type)}<select id="f-retype" class="ctl ctl-sm" aria-label="Tukar jenis kes">
+      ${CASE_TYPES.map((t) => `<option ${t === c.type ? "selected" : ""}>${esc(t)}</option>`).join("")}</select></span>` : "—"], ["Domain", c.domains.map((d) => `<span class="chip-tag">${esc(d)}</span>`).join("") || "—"],
     ["Pautan", c.link ? `<a href="${esc(c.link)}" target="_blank" rel="noopener">${esc(c.link)}</a>` : "—"],
     ["Bukti", c.evidence.length ? `<div class="evidence">${c.evidence.map((f) => `<span>📎 ${esc(f)}</span>`).join("")}</div>` : "Tiada"],
     ["Pengesanan pendua AI", !c.aiResult ? "Belum dijalankan" : c.aiResult.duplicate ? `Pendua ${esc(c.aiResult.of)} (${c.aiResult.score}%)` : c.aiResult.overridden ? "Diketepikan oleh admin" : "Tiada pendua"],
@@ -549,6 +564,7 @@ function renderCase(id) {
     </div>`;
 
   $("view-case").querySelectorAll("[data-htab]").forEach((b) => b.addEventListener("click", () => { historyTab = b.dataset.htab; renderCase(id); }));
+  if ($("f-retype")) $("f-retype").addEventListener("change", (e) => { changeCaseType(c, e.target.value, me); commit(`Jenis kes ditukar kepada ${e.target.value}`); renderCase(id); });
   bindActions(c);
 }
 
@@ -825,17 +841,227 @@ function renderReports() {
   bindReportButtons($("view-reports"));
 }
 
+/* ---------- User management (users.js) ---------- */
+const userFilter = { q: "", role: "", agency: "", status: "" };
+const isMe = (u) => u.email.toLowerCase() === me.name.toLowerCase();
+
+function updateUsersBadge() {
+  $("nav-users").textContent = users.filter((u) => u.status !== "aktif").length || "";
+}
+
+function renderUsers() {
+  loadUsers();
+  const f = userFilter, q = f.q.trim().toLowerCase();
+  const list = users.filter((u) => (!f.role || u.role === f.role) && (!f.agency || (f.agency === "MCMC" ? !u.agency : u.agency === f.agency))
+    && (!f.status || u.status === f.status) && (!q || `${u.name} ${u.email} ${u.position} ${u.agency || ""}`.toLowerCase().includes(q)))
+    .sort((a, b) => (a.status === b.status ? 0 : a.status === "aktif" ? -1 : 1) || (a.agency || "").localeCompare(b.agency || "") || a.name.localeCompare(b.name));
+  const active = users.filter((u) => u.status === "aktif").length;
+  const opt = (v, label, cur) => `<option value="${esc(v)}" ${v === cur ? "selected" : ""}>${esc(label)}</option>`;
+
+  $("view-users").innerHTML = `
+    <div class="kpis kpis-4 users-kpis">
+      <div class="kpi"><div class="kpi-label">Jumlah akaun</div><div class="kpi-value">${users.length}</div><div class="kpi-delta">MCMC dan ${AGENCIES.length} agensi</div></div>
+      <div class="kpi"><div class="kpi-label">Aktif</div><div class="kpi-value">${active}</div><div class="kpi-delta">boleh log masuk</div></div>
+      <div class="kpi"><div class="kpi-label">Tidak aktif</div><div class="kpi-value">${users.length - active}</div><div class="kpi-delta">akses disekat</div></div>
+      <div class="kpi"><div class="kpi-label">Kakitangan MCMC</div><div class="kpi-value">${users.filter((u) => !u.agency).length}</div><div class="kpi-delta">${users.filter((u) => u.agency).length} pengguna agensi</div></div>
+    </div>
+
+    <div class="tabs" role="tablist">${[["", "Semua"], ["aktif", "Aktif"], ["tidak_aktif", "Tidak aktif"]].map(([k, label]) =>
+      `<button role="tab" data-ustatus="${k}" class="${k === f.status ? "on" : ""}">${label}<span class="count">${users.filter((u) => !k || u.status === k).length}</span></button>`).join("")}</div>
+
+    <div class="filter-row">
+      <input id="u-q" class="ctl" type="search" placeholder="Cari nama, e-mel atau jawatan…" value="${esc(f.q)}" style="min-width:240px" aria-label="Cari pengguna">
+      <select id="u-role" class="ctl" aria-label="Peranan">${opt("", "Semua peranan", f.role)}${Object.entries(ROLES).map(([k, r]) => opt(k, r.label, f.role)).join("")}</select>
+      <select id="u-agency" class="ctl" aria-label="Organisasi">${opt("", "Semua organisasi", f.agency)}${opt("MCMC", "MCMC", f.agency)}${AGENCIES.map((a) => opt(a.id, a.id, f.agency)).join("")}</select>
+      <span class="spacer"></span>
+      <a href="#user/new" class="btn-p">+ Tambah pengguna</a>
+    </div>
+
+    <div class="card" style="padding:4px 8px"><div class="table-wrap"><table class="adm-table">
+      <thead><tr><th>Pengguna</th><th>Peranan</th><th>Organisasi</th><th>Status</th><th>Log masuk terakhir</th><th></th></tr></thead>
+      <tbody>${list.length ? list.map((u) => `<tr class="clickable ${u.status === "aktif" ? "" : "row-off"}" data-user="${u.id}" tabindex="0">
+        <td class="claim-cell"><b>${esc(u.name)}${isMe(u) ? ` <span class="chip-tag">Anda</span>` : ""}</b><small>${esc(u.email)}</small></td>
+        <td>${esc(ROLES[u.role].label)}<small class="cell-sub">${esc(u.position || "")}</small></td>
+        <td>${u.agency ? `<span class="chip-tag" title="${esc(AGENCY[u.agency].name)}">${u.agency}</span>` : `<span class="chip-tag">MCMC</span>`}</td>
+        <td>${userStatusBadge(u)}${u.status !== "aktif" && u.statusNote ? `<small class="cell-sub">${esc(u.statusNote)}</small>` : ""}</td>
+        <td title="${u.lastLogin ? fmtDT(u.lastLogin) : ""}">${u.lastLogin ? ago(u.lastLogin) : "Belum pernah"}</td>
+        <td><div class="user-actions">
+          <a href="#user/${u.id}" class="btn-g btn-sm">Edit</a>
+          ${isMe(u) ? "" : `<button class="btn-sm ${u.status === "aktif" ? "btn-g" : "btn-s"}" data-toggle="${u.id}">${u.status === "aktif" ? "Nyahaktifkan" : "Aktifkan"}</button>`}
+        </div></td></tr>`).join("") : `<tr><td colspan="6" class="empty-row">Tiada pengguna yang sepadan.</td></tr>`}</tbody>
+    </table></div></div>
+    <p class="demo-note">Akaun yang tidak aktif tidak boleh log masuk, dan sesi yang sedang dibuka akan dilog keluar serta-merta. Semua perubahan akaun direkodkan dalam log audit.</p>`;
+
+  const root = $("view-users");
+  root.querySelectorAll("[data-ustatus]").forEach((b) => b.addEventListener("click", () => { f.status = b.dataset.ustatus; renderUsers(); }));
+  $("u-q").addEventListener("input", (e) => {
+    f.q = e.target.value;
+    const pos = e.target.selectionStart;
+    renderUsers();
+    $("u-q").focus();
+    $("u-q").setSelectionRange(pos, pos);
+  });
+  $("u-role").addEventListener("change", (e) => { f.role = e.target.value; renderUsers(); });
+  $("u-agency").addEventListener("change", (e) => { f.agency = e.target.value; renderUsers(); });
+  root.querySelectorAll("[data-user]").forEach((tr) => {
+    const open = () => (location.hash = `#user/${tr.dataset.user}`);
+    tr.addEventListener("click", (e) => { if (!e.target.closest("a, button")) open(); });
+    tr.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target === tr) open(); });
+  });
+  root.querySelectorAll("[data-toggle]").forEach((b) => b.addEventListener("click", () => {
+    const u = getUser(b.dataset.toggle), off = u.status === "aktif";
+    if (off && !confirm(`Nyahaktifkan akaun ${u.name} (${u.email})?\n\nPengguna ini tidak akan dapat log masuk sehingga akaun diaktifkan semula.`)) return;
+    setUserStatus(u, off ? "tidak_aktif" : "aktif", me, off ? "Dinyahaktifkan oleh MCMC Admin" : "");
+    saveUsers();
+    commit(off ? `Akaun ${u.name} dinyahaktifkan` : `Akaun ${u.name} diaktifkan`);
+    updateUsersBadge();
+    renderUsers();
+  }));
+}
+
+function renderUser(id) {
+  loadUsers();
+  const isNew = id === "new";
+  const u = isNew ? { name: "", email: "", phone: "", position: "", role: "agency-officer", agency: "KKM", status: "aktif", statusNote: "" } : getUser(id);
+  if (!u) { $("view-user").innerHTML = `<div class="card">Pengguna ${esc(id)} tidak dijumpai. <a href="#users" class="btn-g">Kembali ke senarai pengguna</a></div>`; return; }
+  const self = !isNew && isMe(u);
+  $("page-title").textContent = isNew ? "Tambah pengguna" : u.name;
+  const input = (fid, label, value, opts = "") => `<div><label class="lbl" for="${fid}">${label}</label><input id="${fid}" class="ctl" value="${esc(value || "")}" ${opts}></div>`;
+  const activity = isNew ? [] : store.audit.filter((a) => a.user === u.email || a.target === u.email).slice(0, 8);
+
+  $("view-user").innerHTML = `
+    <a href="#users" class="back-link">← Semua pengguna</a>
+    <form class="acct-grid" id="user-form" novalidate>
+      <div style="display:grid;gap:18px;min-width:0">
+        <div class="card">
+          <div class="card-head"><div><h2>Maklumat pengguna</h2><p>${isNew ? "Akaun baharu boleh log masuk serta-merta jika aktif" : `ID ${u.id} · dicipta ${fmtDate(u.createdAt)}`}</p></div></div>
+          <div class="form-row">
+            ${input("u-name", "Nama penuh", u.name, "required")}
+            ${input("u-email", "E-mel", u.email, 'type="email" required')}
+          </div>
+          <div class="form-row">
+            ${input("u-phone", "No. telefon", u.phone, 'type="tel"')}
+            ${input("u-position", "Jawatan", u.position)}
+          </div>
+          <div class="form-row">
+            <div><label class="lbl" for="u-role-sel">Peranan</label>
+              <select id="u-role-sel" class="ctl" ${self ? "disabled" : ""}>${Object.entries(ROLES).map(([k, r]) => `<option value="${k}" ${k === u.role ? "selected" : ""}>${esc(r.label)}</option>`).join("")}</select></div>
+            <div id="u-agency-wrap"><label class="lbl" for="u-agency-sel">Agensi</label>
+              <select id="u-agency-sel" class="ctl">${AGENCIES.map((a) => `<option value="${a.id}" ${a.id === u.agency ? "selected" : ""}>${a.id} · ${esc(a.name)}</option>`).join("")}</select></div>
+          </div>
+          ${self ? `<p class="demo-note" style="margin:0">Anda tidak boleh menukar peranan atau status akaun anda sendiri.</p>` : ""}
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div><h2>Status akaun</h2><p>Hanya akaun aktif boleh log masuk ke portal</p></div></div>
+          <div class="mode-pick status-pick">
+            <label><input type="radio" name="u-status" value="aktif" ${u.status === "aktif" ? "checked" : ""} ${self ? "disabled" : ""}><span><b>Aktif</b><small>Boleh log masuk dan menerima tugasan kes</small></span></label>
+            <label><input type="radio" name="u-status" value="tidak_aktif" ${u.status !== "aktif" ? "checked" : ""} ${self ? "disabled" : ""}><span><b>Tidak aktif</b><small>Akses disekat; sejarah dan log audit dikekalkan</small></span></label>
+          </div>
+          <div class="form-row one" id="u-note-wrap" style="margin-top:12px">
+            <div><label class="lbl" for="u-note">Sebab dinyahaktifkan</label>
+              <input id="u-note" class="ctl" value="${esc(u.statusNote)}" placeholder="cth. Bertukar jabatan, bersara, cuti panjang"></div>
+          </div>
+        </div>
+
+        <p class="field-err" id="u-err" hidden></p>
+        <div class="action-row">
+          <button class="btn-p" type="submit">${isNew ? "Cipta akaun" : "Simpan perubahan"}</button>
+          <a href="#users" class="btn-g">Batal</a>
+          ${isNew ? "" : `<span class="spacer" style="flex:1"></span><button class="btn-s" type="button" id="u-reset">Hantar pautan tetapan semula kata laluan</button>`}
+        </div>
+      </div>
+
+      <div style="display:grid;gap:18px;align-content:start;min-width:0">
+        ${isNew ? `<div class="card"><h2 class="sub-h" style="margin-top:0">Akaun baharu</h2><p class="muted-p">Pautan untuk menetapkan kata laluan akan dihantar ke e-mel pengguna selepas akaun dicipta.</p></div>` : `
+        <div class="card acct-card">
+          <span class="acct-avatar">${esc(u.name[0] || "?")}</span>
+          <b class="acct-name">${esc(u.name)}</b>
+          <span class="acct-mail">${esc(u.email)}</span>
+          <dl class="facts acct-facts">
+            <div><dt>Status</dt><dd>${userStatusBadge(u)}</dd></div>
+            <div><dt>Peranan</dt><dd>${esc(roleLabel(u))}</dd></div>
+            <div><dt>Log masuk terakhir</dt><dd>${fmtWhen(u.lastLogin)}</dd></div>
+            <div><dt>Dikemas kini</dt><dd>${fmtWhen(u.updatedAt)}</dd></div>
+          </dl>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h2>Aktiviti terkini</h2><p>Daripada log audit</p></div></div>
+          <ul class="timeline-list">${activity.length ? activity.map((a) => `<li><b>${esc(a.action)}</b><p>${esc(a.target)}${a.detail ? ` · ${esc(a.detail)}` : ""}</p><div class="who">${a.user === u.email ? "" : `${esc(a.user)} · `}${fmtDT(a.at)}</div></li>`).join("") : `<li><p>Tiada aktiviti direkodkan.</p></li>`}</ul>
+        </div>`}
+      </div>
+    </form>`;
+
+  const sync = () => {
+    $("u-agency-wrap").hidden = !ROLES[$("u-role-sel").value].agency;
+    $("u-note-wrap").hidden = document.querySelector('[name="u-status"]:checked').value === "aktif";
+  };
+  $("u-role-sel").addEventListener("change", sync);
+  document.querySelectorAll('[name="u-status"]').forEach((r) => r.addEventListener("change", sync));
+  sync();
+
+  if ($("u-reset")) $("u-reset").addEventListener("click", () => {
+    audit(me, "Tetapan semula kata laluan", u.email, "Pautan tetapan semula dihantar melalui e-mel");
+    commit(`Pautan tetapan semula dihantar ke ${u.email}`);
+  });
+
+  $("user-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const role = $("u-role-sel").value;
+    const data = {
+      name: $("u-name").value.trim(), email: $("u-email").value.trim().toLowerCase(), phone: $("u-phone").value.trim(),
+      position: $("u-position").value.trim(), role, agency: ROLES[role].agency ? $("u-agency-sel").value : null,
+    };
+    const status = document.querySelector('[name="u-status"]:checked').value;
+    const note = $("u-note").value.trim();
+    const taken = users.find((x) => x !== u && x.email.toLowerCase() === data.email);
+    const err = !data.name ? "Nama penuh diperlukan."
+      : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) ? "Masukkan alamat e-mel yang sah."
+      : taken ? `E-mel ini telah digunakan oleh ${taken.name}.`
+      : emailDomainError(data.email, role, data.agency);
+    $("u-err").textContent = err;
+    $("u-err").hidden = !err;
+    if (err) return;
+
+    if (isNew) {
+      const created = addUser({ ...data, status, statusNote: status === "aktif" ? "" : note }, me);
+      saveUsers();
+      commit(`Akaun ${created.name} dicipta`);
+      updateUsersBadge();
+      location.hash = `#user/${created.id}`;
+      return;
+    }
+    const changed = updateUser(u, self ? { ...data, role: u.role, agency: u.agency } : data, me);
+    const statusChanged = !self && setUserStatus(u, status, me, note);
+    if (!statusChanged && u.status !== "aktif" && note !== u.statusNote) { u.statusNote = note; audit(me, "Kemas kini akaun", u.email, `Sebab tidak aktif: ${note || "—"}`); }
+    saveUsers();
+    // keep the session pointing at the renamed account
+    if (self && data.email !== me.name) {
+      me.name = data.email;
+      try { localStorage.setItem("sbn-admin", JSON.stringify({ role: "mcmc-admin", email: me.name })); } catch (err) { }
+      $("me-email").textContent = me.name;
+    }
+    commit(changed.length || statusChanged ? "Akaun pengguna dikemas kini" : "Tiada perubahan");
+    updateUsersBadge();
+    renderUser(id);
+  });
+}
+
 /* ---------- Router ---------- */
-const TITLES = { dashboard: "Papan pemuka", cases: "Kes", audit: "Log audit", reports: "Laporan" };
+const TITLES = { dashboard: "Papan pemuka", cases: "Kes", audit: "Log audit", reports: "Laporan", users: "Pengurusan pengguna", account: "Akaun saya" };
 
 function route() {
   hideTip();
   const [view, id] = location.hash.slice(1).split("/");
-  const v = view === "case" && id ? "case" : TITLES[view] ? view : "dashboard";
+  const v = (view === "case" || view === "user") && id ? view : TITLES[view] ? view : "dashboard";
+  const parent = { case: "cases", user: "users" }[v] || v;
   document.querySelectorAll(".adm-view").forEach((s) => (s.hidden = s.dataset.view !== v));
-  document.querySelectorAll(".adm-nav a").forEach((a) => a.classList.toggle("active", a.dataset.view === (v === "case" ? "cases" : v)));
-  $("crumb").textContent = v === "case" ? "Kes" : "MCMC Admin";
+  document.querySelectorAll(".adm-nav a").forEach((a) => a.classList.toggle("active", a.dataset.view === parent));
+  $("crumb").textContent = v === "case" ? "Kes" : v === "user" ? "Pengurusan pengguna" : "MCMC Admin";
   $("page-title").textContent = TITLES[v] || "";
+  if (v === "users") renderUsers();
+  if (v === "user") renderUser(decodeURIComponent(id));
+  if (v === "account") accountView(me, $("view-account"), me.roleId, null, () => route());
   if (v === "dashboard") renderDashboard();
   if (v === "cases") renderCases();
   if (v === "case") renderCase(decodeURIComponent(id));
@@ -857,8 +1083,10 @@ $("logout").addEventListener("click", () => {
   location.href = "../admin/adminlogin.html";
 });
 $("reset-demo").addEventListener("click", () => {
-  if (!confirm("Tetapkan semula semua kes demo dan log audit kepada keadaan asal?")) return;
+  if (!confirm("Tetapkan semula semua kes demo, akaun pengguna dan log audit kepada keadaan asal?")) return;
   resetStore();
+  resetUsers();
+  updateUsersBadge();
   commit("Demo ditetapkan semula");
   route();
 });
@@ -867,8 +1095,10 @@ $("reset-demo").addEventListener("click", () => {
 window.addEventListener("storage", (e) => {
   if (e.key === PUBLIC_KEY) { importPublicReports(); saveStore(); }
   else if (e.key === CASES_KEY) loadStore();
+  else if (e.key === USERS_KEY) { loadUsers(); updateUsersBadge(); if (/^#(users|account)$/.test(location.hash)) route(); return; }
   else return;
   updateNavBadge();
+  drawBell();
   route();
 });
 
@@ -880,4 +1110,5 @@ window.addEventListener("resize", () => {
 
 saveStore();
 updateNavBadge();
+updateUsersBadge();
 route();

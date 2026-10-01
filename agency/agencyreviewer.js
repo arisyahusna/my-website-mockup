@@ -69,6 +69,7 @@ function renderReviews() {
       list,
       [
         ["ID kes", (c) => `<span class="mono">${c.id}</span>`],
+        ["Jenis kes", (c) => typeBadge(c.type)],
         [
           "Dakwaan",
           (c) =>
@@ -240,7 +241,7 @@ function bindCase(c, a) {
 }
 
 /* ---------- Router ---------- */
-const TITLES = { reviews: "Semakan draf", activity: "Log aktiviti" };
+const TITLES = { reviews: "Semakan draf", activity: "Log aktiviti", account: "Akaun saya" };
 function route() {
   const [view, id] = location.hash.slice(1).split("/");
   const v = view === "case" && id ? "case" : TITLES[view] ? view : "reviews";
@@ -261,13 +262,14 @@ function route() {
   if (v === "reviews") renderReviews();
   if (v === "case") renderCase(decodeURIComponent(id));
   if (v === "activity") activityView(me, $("view-activity"));
+  if (v === "account") accountView(me, $("view-account"), me.roleId, me.agency);
 }
 window.addEventListener("hashchange", () => {
   route();
   window.scrollTo(0, 0);
 });
 $("global-q").addEventListener("input", () => {
-  if (location.hash.startsWith("#case/") || location.hash === "#activity")
+  if (location.hash.startsWith("#case/") || location.hash === "#activity" || location.hash === "#account")
     location.hash = "#reviews";
   else renderReviews();
 });

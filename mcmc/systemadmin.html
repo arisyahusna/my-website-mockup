@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/webp" href="../image/icon.png">
     <link rel="stylesheet" href="../style.css">
@@ -63,6 +63,23 @@
                     </svg>
                     Laporan
                 </a>
+                <a href="#users" data-view="users">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="9" cy="8" r="3.5" />
+                        <path d="M2.5 20a6.5 6.5 0 0113 0M16 4.5a3.5 3.5 0 010 7M18 14a5.5 5.5 0 013.5 6" />
+                    </svg>
+                    Pengguna
+                    <span class="nav-badge muted" id="nav-users" title="Akaun tidak aktif"></span>
+                </a>
+                <a href="#account" data-view="account">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 21a8 8 0 0116 0" />
+                    </svg>
+                    Akaun saya
+                </a>
             </nav>
 
             <div class="adm-side-foot">
@@ -86,7 +103,19 @@
                     <div class="crumb" id="crumb">MCMC Admin</div>
                     <h1 id="page-title">Papan pemuka</h1>
                 </div>
-                <label class="search" style="margin-left:auto">
+                <span class="spacer" style="flex:1"></span>
+                <div class="bell-wrap">
+                    <button class="bell" id="bell" aria-label="Notifikasi">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.7 21a2 2 0 01-3.4 0" />
+                        </svg>
+                        <span class="bell-count" id="bell-count"></span>
+                    </button>
+                    <div class="bell-panel" id="bell-panel" hidden></div>
+                </div>
+                <label class="search">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
                         stroke-linecap="round">
                         <circle cx="11" cy="11" r="7" />
@@ -102,6 +131,9 @@
                 <section class="adm-view" id="view-case" data-view="case" hidden></section>
                 <section class="adm-view" id="view-audit" data-view="audit" hidden></section>
                 <section class="adm-view" id="view-reports" data-view="reports" hidden></section>
+                <section class="adm-view" id="view-users" data-view="users" hidden></section>
+                <section class="adm-view" id="view-user" data-view="user" hidden></section>
+                <section class="adm-view" id="view-account" data-view="account" hidden></section>
             </main>
         </div>
     </div>
@@ -109,7 +141,10 @@
     <div class="viz-tip" id="viz-tip" role="tooltip"></div>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+    <script src="../storydata.js"></script>
     <script src="../cases.js"></script>
+    <script src="../users.js"></script>
+    <script src="bell.js"></script>
     <script src="systemadmin.js"></script>
 </body>
 

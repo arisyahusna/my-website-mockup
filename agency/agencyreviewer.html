@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/webp" href="../image/icon.png">
     <link rel="stylesheet" href="../style.css">
@@ -44,6 +44,14 @@
                         <circle cx="12" cy="12" r="9" />
                     </svg>
                     Log aktiviti
+                </a>
+                <a href="#account" data-view="account">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 21a8 8 0 0116 0" />
+                    </svg>
+                    Akaun saya
                 </a>
             </nav>
 
@@ -97,14 +105,18 @@
                 <section class="adm-view" id="view-reviews" data-view="reviews"></section>
                 <section class="adm-view" id="view-case" data-view="case" hidden></section>
                 <section class="adm-view" id="view-activity" data-view="activity" hidden></section>
+                <section class="adm-view" id="view-account" data-view="account" hidden></section>
             </main>
         </div>
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+    <script src="../storydata.js"></script>
     <script src="../cases.js"></script>
+    <script src="../users.js"></script>
     <script src="../mcmc/staff.js"></script>
+    <script src="../mcmc/bell.js"></script>
     <script src="agency.js"></script>
     <script src="agencyreviewer.js"></script>
 </body>

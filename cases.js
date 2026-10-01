@@ -6,8 +6,8 @@
    Inside semakan_agensi each agency assignment goes diterima → menyelidik (lead agency only) → draf → diluluskan,
    or → pindaan when a reviewer asks for changes. */
 
-const CASES_KEY = "sbn-mcmc-cases-v4";
-const PUBLIC_KEY = "sbn-state-ms2"; // the public site's store (general-public/userhome.html)
+const CASES_KEY = "sbn-mcmc-cases-v6";
+const PUBLIC_KEY = "sbn-state-ms2"; // the public site's store (index.html)
 const HOUR = 3600e3;
 const MIN = 60e3;
 
@@ -47,7 +47,10 @@ const AGENCIES = [
 ];
 const AGENCY = Object.fromEntries(AGENCIES.map((a) => [a.id, a]));
 
-const CASE_TYPES = ["Maklumat palsu", "Penipuan", "Mengelirukan", "Media dimanipulasi / deepfake", "Lain-lain"];
+// Urgent, non-urgent, defamation, satire, resolved. Publishing or merging a case sets it to "Selesai".
+const CASE_TYPES = ["Segera", "Tidak segera", "Fitnah", "Satira", "Selesai"];
+const typeSlug = (t) => String(t || "").toLowerCase().replace(/[^a-z]+/g, "-");
+const typeBadge = (t) => (t ? `<span class="ctype ct-${typeSlug(t)}">${String(t).replace(/[&<>"']/g, "")}</span>` : "—");
 const DOMAINS = ["Penipuan", "Kesihatan", "Ekonomi", "Politik", "Bencana", "Teknologi", "Pendidikan", "Pengangkutan", "Alam Sekitar", "Agama"];
 
 // Same keys and labels as the public site (articles.js LABEL)
@@ -102,10 +105,39 @@ function loadStore() {
 }
 function saveStore() {
   try { localStorage.setItem(CASES_KEY, JSON.stringify(store)); } catch (e) { }
+  syncSite();
 }
 function resetStore() {
   seedStore();
   importPublicReports();
+  if (typeof resetSite === "function") resetSite();
+  syncSite();
+}
+
+/* ---------- Public site (storydata.js reads what this writes) ---------- */
+// Case domains → the category bar on index.html
+const DOMAIN_CAT = { Penipuan: "Jenayah", Kesihatan: "Kesihatan", Ekonomi: "Ekonomi", Politik: "Urus Tadbir", Bencana: "Bencana", Teknologi: "Keselamatan", Pendidikan: "Pendidikan", Pengangkutan: "Pengangkutan", "Alam Sekitar": "Kesihatan", Agama: "Agama" };
+const SPLIT = { false: [90, 8, 2], mislead: [12, 80, 8], true: [3, 7, 90] };
+const storyIdOf = (c) => c.article || c.id.toLowerCase();
+
+function storyFromCase(c) {
+  const ct = c.content || {}, v = ct.verdict || "false";
+  const upload = (ct.images || []).find((i) => i.kind === "upload");
+  return {
+    id: storyIdOf(c), caseId: c.id, v, title: ct.title || c.claim, cat: DOMAIN_CAT[c.domains[0]] || "Urus Tadbir",
+    at: c.published.at, img: c.id, imgSrc: upload ? upload.src : "", split: SPLIT[v], n: 6 + (ct.refs || []).length + c.assignments.length * 3,
+    claim: c.claim, summary: ct.summary || "", body: ct.body || "", refs: ct.refs || [],
+  };
+}
+
+// Published cases appear on the public site; a sample story linked to a case waits until that case is published
+function syncSite() {
+  if (typeof loadSite !== "function") return; // page without storydata.js
+  const site = loadSite();
+  site.fromCases = store.cases.filter((c) => c.status === "selesai" && c.published && !c.article).map(storyFromCase);
+  site.pending = store.cases.filter((c) => c.article && c.status !== "selesai").map((c) => c.article);
+  site.liveAt = Object.fromEntries(store.cases.filter((c) => c.article && c.published && c.published.live).map((c) => [c.article, c.published.at]));
+  saveSite(site);
 }
 const getCase = (id) => store.cases.find((c) => c.id === id);
 
@@ -135,6 +167,7 @@ function receiveCase(data, actor = SYSTEM) {
   };
   store.cases.unshift(c);
   logAction(c, actor, `Kes diterima daripada ${c.reporter} melalui ${c.channel} (dilihat di ${c.platform}).`, "Kes diterima");
+  notify("mcmc:admin", "Kes baharu diterima", `${c.id} · ${c.claim}`, c.id);
   return c;
 }
 
@@ -167,6 +200,7 @@ function runDuplicateCheck(c) {
   c.aiResult = hit ? { duplicate: true, of: hit.of, score: hit.score, at: now() } : { duplicate: false, at: now() };
   logAction(c, AI_BOT, hit ? `Kemungkinan pendua dikesan: ${hit.of} (${hit.score}% serupa).` : "Tiada pendua dikesan.", "Pengesanan pendua AI");
   if (!hit) setStatus(c, "klasifikasi", AI_BOT, "tiada pendua");
+  else notify("mcmc:admin", "AI mengesan kemungkinan pendua", `${c.id} serupa dengan ${hit.of} (${hit.score}%)`, c.id);
   return c.aiResult;
 }
 
@@ -174,6 +208,7 @@ function mergeCase(c, actor) {
   const target = getCase(c.aiResult.of);
   logAction(c, actor, `Digabungkan dengan ${c.aiResult.of} dan ditutup.`, "Gabung kes");
   setStatus(c, "digabung", actor, `pendua ${c.aiResult.of}`);
+  changeCaseType(c, "Selesai", actor, "digabung");
   if (target) logAction(target, actor, `Kes pendua ${c.id} digabungkan ke dalam kes ini.`, "Gabung kes");
   const article = target && target.article && target.status === "selesai" ? target.article : null;
   syncReporter(c, "closed", `Dakwaan ini sama dengan kes ${c.aiResult.of} yang telah disemak. Laporan anda digabungkan dan ditutup.`, article);
@@ -190,6 +225,12 @@ function classifyCase(c, type, domains, actor) {
   c.domains = domains;
   logAction(c, actor, `Jenis kes: ${type}. Domain: ${domains.join(", ")}.`, "Klasifikasi kes");
   setStatus(c, "agihan", actor);
+}
+function changeCaseType(c, type, actor, why) {
+  if (!type || c.type === type) return;
+  const from = c.type;
+  c.type = type;
+  logAction(c, actor, `Jenis kes ditukar: ${from || "—"} → ${type}${why ? ` (${why})` : ""}.`, "Tukar jenis kes");
 }
 
 // The first agency picked is the lead: its Agency Officer drafts the rebuttal, and every tagged agency's reviewer approves it
@@ -292,6 +333,7 @@ function escalateCase(c, urgent, reason, actor) {
   c.escalations.push({ at: now(), by: actor.name, agency: leadOf(c), urgent, reason });
   if (urgent) c.priority = "Tinggi";
   logAction(c, actor, `${leadOf(c)}: ${urgent ? "eskalasi segera" : "eskalasi"} kepada MCMC Admin — ${reason}`, urgent ? "Eskalasi segera" : "Eskalasi");
+  notify("mcmc:admin", `${urgent ? "Eskalasi segera" : "Eskalasi"} daripada ${leadOf(c)}`, `${c.id} · ${reason}`, c.id);
 }
 
 // Mockup only: lets the MCMC Admin page (and the demo seed) play the agency roles one step at a time
@@ -315,12 +357,14 @@ function receiveRebuttal(c) {
   setStatus(c, "semakan_kualiti", SYSTEM, "semua agensi meluluskan");
   logAction(c, SYSTEM, `Draf sanggahan akhir diterima daripada ${names} dan dimajukan kepada MCMC Admin.`, "Draf sanggahan diterima");
   c.assignments.forEach((a) => notify(`officer:${a.agency}`, "Disahkan — dimajukan kepada MCMC", `${c.id} · semua agensi meluluskan draf`, c.id));
+  notify("mcmc:admin", "Draf sanggahan menunggu semakan kualiti", `${c.id} · diluluskan oleh ${names}`, c.id);
 }
 
 function approveRebuttal(c, actor) {
   ensureContent(c);
   logAction(c, actor, "Semakan kualiti lulus — sanggahan dihantar kepada MCMC Editor.", "Semakan kualiti");
   setStatus(c, "editorial", actor);
+  notify("mcmc:editor", "Kes baharu untuk semakan editorial", `${c.id} · ${c.claim}`, c.id);
 }
 
 function returnForRevision(c, reason, actor) {
@@ -366,11 +410,13 @@ function editorSignOff(c, actor = EDITOR, note = "") {
   c.signoff = { by: actor.name, at: now(), note };
   logAction(c, actor, `Kandungan akhir disemak (format, kejelasan, ketepatan)${n ? ` · ${n} imej sokongan` : ""}. Ditandatangani dan diserahkan kepada Content Publisher.${note ? ` Nota: ${note}` : ""}`, "Tandatangan editorial");
   setStatus(c, "penerbitan", actor, "ditandatangani editor");
+  notify("mcmc:publisher", "Kandungan sedia diterbitkan", `${c.id} · ditandatangani oleh ${actor.name}`, c.id);
 }
 function editorReturn(c, reason, actor) {
   c.returned = { stage: "semakan_kualiti", by: actor.name, role: actor.role, at: now(), reason };
   logAction(c, actor, `Dipulangkan kepada MCMC Admin: ${reason}`, "Pulangkan kes");
   setStatus(c, "semakan_kualiti", actor, "dipulangkan oleh editor");
+  notify("mcmc:admin", "Kes dipulangkan oleh MCMC Editor", `${c.id} · ${reason}`, c.id);
 }
 
 /* ---------- Publishing (mcmc/contentpublisher.html) ---------- */
@@ -386,16 +432,20 @@ function cancelSchedule(c, actor) {
 }
 function publishCase(c, opts = {}, actor = PUBLISHER) {
   const channels = opts.channels || CHANNELS.map((x) => x.id);
-  c.published = { at: now(), by: actor.name, channels, scheduled: !!opts.scheduled, notifiedAt: null };
+  // live: published from the portal rather than by the demo seed (moves its story to the top of index.html)
+  c.published = { at: now(), by: actor.name, channels, scheduled: !!opts.scheduled, notifiedAt: null, live: !_seeding };
   c.schedule = null;
   logAction(c, actor, `Diterbitkan${opts.scheduled ? " mengikut jadual" : ""} di ${channelNames(channels)}. Kandungan boleh kongsi dijana; pangkalan data sambungan pelayar dan chatbot dikemas kini.`, "Terbit");
   setStatus(c, "selesai", actor);
+  changeCaseType(c, "Selesai", actor, "diterbitkan");
+  notify("mcmc:editor", "Semakan fakta telah diterbitkan", `${c.id} · ${(c.content && c.content.title) || c.claim}`, c.id);
+  if (opts.scheduled) notify("mcmc:publisher", "Diterbitkan mengikut jadual", `${c.id} · ${channelNames(channels)}`, c.id);
   if (opts.notify !== false) notifyReporter(c, actor);
 }
 function notifyReporter(c, actor) {
   c.published.notifiedAt = now();
-  logAction(c, actor, `Pelapor (${c.reporter}) dimaklumkan melalui e-mel dan notifikasi aplikasi.`, "Maklumkan pelapor");
-  syncReporter(c, "published", "Semakan fakta telah diterbitkan — terima kasih kerana melaporkan.", c.article);
+  logAction(c, actor, `Pelapor (${c.reporter}) dimaklumkan melalui e-mel.`, "Maklumkan pelapor");
+  syncReporter(c, "published", "Semakan fakta telah diterbitkan — terima kasih kerana melaporkan.", storyIdOf(c));
 }
 function publisherReturn(c, reason, actor) {
   c.returned = { stage: "editorial", by: actor.name, role: actor.role, at: now(), reason };
@@ -403,6 +453,7 @@ function publisherReturn(c, reason, actor) {
   c.schedule = null;
   logAction(c, actor, `Dipulangkan kepada MCMC Editor: ${reason}`, "Pulangkan kes");
   setStatus(c, "editorial", actor, "dipulangkan oleh publisher");
+  notify("mcmc:editor", "Kes dipulangkan oleh Content Publisher", `${c.id} · ${reason}`, c.id);
 }
 
 // Publishes anything whose scheduled time has passed (runs on every page load and on a timer)
@@ -416,7 +467,7 @@ function runScheduled() {
   return due.length;
 }
 
-/* ---------- Link with the public site (general-public/userhome.html) ---------- */
+/* ---------- Link with the public site (index.html) ---------- */
 function readPublic() {
   try { return JSON.parse(localStorage.getItem(PUBLIC_KEY)); } catch (e) { return null; }
 }
@@ -425,13 +476,12 @@ function readPublic() {
 function importPublicReports() {
   const pub = readPublic();
   if (!pub || !Array.isArray(pub.reports)) return;
-  let reporter = "pengguna@contoh.com";
-  try { reporter = localStorage.getItem("sbn-user") || reporter; } catch (e) { }
   let added = false;
   pub.reports.slice().reverse().forEach((r) => {
     if (getCase(r.id) || !["received", "review"].includes(r.status)) return;
     at(r.at, () => {
-      const c = receiveCase({ id: r.id, claim: r.claim, reporter, channel: "Laman web", platform: r.platform, link: r.link, fromPublic: true });
+      // no user accounts: the reporter is the optional e-mail given on the form
+      const c = receiveCase({ id: r.id, claim: r.claim, reporter: r.email || "Orang awam (tanpa e-mel)", channel: "Laman web", platform: r.platform, link: r.link, fromPublic: true });
       if (r.status === "review") setStatus(c, "disahkan", SYSTEM, "dikemas kini daripada laman awam");
     });
     added = true;
@@ -439,7 +489,7 @@ function importPublicReports() {
   if (added) store.cases.sort((a, b) => b.receivedAt - a.receivedAt);
 }
 
-// Push a status change back to the reporter's "Kes Dilaporkan" + notifications
+// Record a status change on the public report; the reporter is told by e-mail (no accounts on the public site)
 function syncReporter(c, status, text, article) {
   if (_seeding) return;
   const pub = readPublic();
@@ -449,12 +499,9 @@ function syncReporter(c, status, text, article) {
   r.status = status;
   if (article) r.article = article;
   r.updates.push({ s: status, text, at: Date.now() });
-  const title = { review: "Laporan anda sedang disemak", published: "Semakan fakta diterbitkan untuk laporan anda", closed: "Laporan anda telah ditutup" }[status];
-  pub.notifs.unshift({
-    id: Math.max(0, ...pub.notifs.map((n) => n.id)) + 1, type: "report", title, body: `${c.id} · ${c.claim}`,
-    link: article ? `article/${article}` : "foryou/reported", at: Date.now(), read: false,
-  });
   try { localStorage.setItem(PUBLIC_KEY, JSON.stringify(pub)); } catch (e) { }
+  // TODO: the backend sends this update to r.email
+  if (status !== "published") logAction(c, SYSTEM, `E-mel kemas kini dihantar kepada ${r.email || c.reporter}: ${text}`, "E-mel pelapor"); // publishing logs its own e-mail
 }
 
 /* ---------- SLA ---------- */
@@ -499,7 +546,7 @@ function seedStore() {
   at(T - 72 * HOUR, () => { c = receiveCase({ id: "SBN-2026-0012", claim: "Mesej WhatsApp menawarkan bantuan digital RM500 jika saya menekan pautan", reporter: "siti.a@gmail.com", platform: "WhatsApp", evidence: ["mesej_rm500.jpg"], priority: "Tinggi", article: "rm500" }); });
   walk(c, [
     [71.5, (c) => verifyCase(c, SEED_ADMIN)], [71.4, runDuplicateCheck],
-    [71, (c) => classifyCase(c, "Penipuan", ["Penipuan", "Ekonomi"], SEED_ADMIN)],
+    [71, (c) => classifyCase(c, "Segera", ["Penipuan", "Ekonomi"], SEED_ADMIN)],
     [70.8, (c) => assignAgencies(c, ["BNM", "PDRM"], 48, "Keutamaan tinggi — pautan pancingan data aktif", SEED_ADMIN)],
     [68, start], [62, submit("Bank Negara Malaysia dan PDRM mengesahkan tiada program bantuan digital RM500. Pautan yang dikongsi membawa ke laman tiruan yang meniru portal kerajaan untuk mencuri butiran perbankan. Orang ramai diminta tidak menekan pautan tersebut dan melaporkan sebarang transaksi mencurigakan kepada bank masing-masing.")], [58, approve("BNM")], [55, approve("PDRM", "Selaras dengan laporan polis yang diterima.")],
     [52, (c) => approveRebuttal(c, SEED_ADMIN)],
@@ -515,7 +562,7 @@ function seedStore() {
   at(T - 140 * HOUR, () => { c = receiveCase({ id: "SBN-2026-0006", claim: "Hantaran mendakwa harga petrol akan naik dua kali ganda mulai bulan depan", reporter: "rizal.a@gmail.com", platform: "Facebook", evidence: ["hantaran_petrol.png"], article: "fuel" }); });
   walk(c, [
     [139, (c) => verifyCase(c, SEED_ADMIN)], [138.9, runDuplicateCheck],
-    [138, (c) => classifyCase(c, "Mengelirukan", ["Ekonomi"], SEED_ADMIN)],
+    [138, (c) => classifyCase(c, "Tidak segera", ["Ekonomi"], SEED_ADMIN)],
     [137.5, (c) => assignAgencies(c, ["KPDN"], 48, "", SEED_ADMIN)],
     [134, start], [129, submit("KPDN menjelaskan tiada keputusan untuk menaikkan harga petrol dua kali ganda. Sebarang pelarasan subsidi akan diumumkan secara rasmi dan dilaksanakan secara berperingkat.")], [126, approve("KPDN")], [124, (c) => approveRebuttal(c, SEED_ADMIN)],
     [123, content({
@@ -530,7 +577,7 @@ function seedStore() {
   at(T - 110 * HOUR, () => { c = receiveCase({ id: "SBN-2026-0009", claim: "Mesej mendakwa bacaan jerebu di Lembah Klang mencapai tahap tidak sihat", reporter: "nadia.s@gmail.com", channel: "Sambungan pelayar", platform: "X (Twitter)", evidence: ["bacaan_ipu.png"], article: "haze" }); });
   walk(c, [
     [109, (c) => verifyCase(c, SEED_ADMIN)], [108.9, runDuplicateCheck],
-    [108, (c) => classifyCase(c, "Lain-lain", ["Alam Sekitar", "Kesihatan"], SEED_ADMIN)],
+    [108, (c) => classifyCase(c, "Tidak segera", ["Alam Sekitar", "Kesihatan"], SEED_ADMIN)],
     [107.5, (c) => assignAgencies(c, ["JAS"], 48, "Sahkan bacaan IPU stesen pemantauan", SEED_ADMIN)],
     [100, start], [85, submit("Jabatan Alam Sekitar mengesahkan bacaan Indeks Pencemar Udara (IPU) di tiga stesen di Lembah Klang melepasi 100 (tidak sihat) pada tarikh yang disebut. Orang ramai dinasihatkan mengurangkan aktiviti luar dan merujuk portal rasmi JAS untuk bacaan semasa.", [{ name: "bacaan_ipu_stesen_jas.pdf", size: 402432 }])], [80, approve("JAS")],
     [30, (c) => approveRebuttal(c, SEED_ADMIN)],
@@ -551,7 +598,7 @@ function seedStore() {
   at(T - 96 * HOUR, () => { c = receiveCase({ id: "SBN-2026-0015", claim: "Hantaran mendakwa kajian baharu membuktikan vitamin biasa boleh menyembuhkan kanser", reporter: "kamal.i@yahoo.com", platform: "WhatsApp", evidence: ["hantaran_vitamin.jpg"], priority: "Tinggi", article: "vitamin" }); });
   walk(c, [
     [95, (c) => verifyCase(c, SEED_ADMIN)], [94.9, runDuplicateCheck],
-    [94, (c) => classifyCase(c, "Mengelirukan", ["Kesihatan"], SEED_ADMIN)],
+    [94, (c) => classifyCase(c, "Segera", ["Kesihatan"], SEED_ADMIN)],
     [93.5, (c) => assignAgencies(c, ["KKM"], 72, "", SEED_ADMIN)],
     [80, start], [45, submit("Kementerian Kesihatan Malaysia menjelaskan kajian yang dirujuk hanya dijalankan ke atas sel di makmal dan bukan ke atas pesakit. Tiada bukti vitamin tersebut menyembuhkan kanser. Pesakit dinasihatkan meneruskan rawatan yang disyorkan doktor.", [{ name: "kenyataan_kkm_vitamin.pdf", size: 221184 }, { name: "ringkasan_kajian_makmal.pdf", size: 98304 }])], [40, approve("KKM")],
     [12, (c) => approveRebuttal(c, SEED_ADMIN)],
@@ -567,7 +614,7 @@ function seedStore() {
   at(T - 86 * HOUR, () => { c = receiveCase({ id: "SBN-2026-0018", claim: "Carta tular mendakwa harga beras tempatan telah naik tiga kali ganda", reporter: "suresh.p@gmail.com", platform: "Instagram", evidence: ["carta_beras.png"], article: "rice" }); });
   walk(c, [
     [85, (c) => verifyCase(c, SEED_ADMIN)], [84.9, runDuplicateCheck],
-    [84, (c) => classifyCase(c, "Mengelirukan", ["Ekonomi"], SEED_ADMIN)],
+    [84, (c) => classifyCase(c, "Tidak segera", ["Ekonomi"], SEED_ADMIN)],
     [83.5, (c) => assignAgencies(c, ["KPDN"], 48, "", SEED_ADMIN)],
     [80, start], [65, submit("Data rasmi menunjukkan harga beras tempatan meningkat secara sederhana dalam tempoh lima tahun. Carta yang tular bermula pada paras harga yang luar biasa rendah sehingga kenaikan kelihatan tiga kali ganda.")], [60, approve("KPDN")], [50, (c) => approveRebuttal(c, SEED_ADMIN)],
     [10, content({
@@ -583,7 +630,7 @@ function seedStore() {
   at(T - 54 * HOUR, () => { c = receiveCase({ id: "SBN-2026-0021", claim: "Video menteri mengumumkan cuti umum mengejut pada hari Isnin", reporter: "farhan.k@yahoo.com", channel: "Sambungan pelayar", platform: "Facebook", link: "https://facebook.com/watch/?v=000000", evidence: ["video_menteri.mp4"], priority: "Tinggi", article: "deepfake" }); });
   walk(c, [
     [53, (c) => verifyCase(c, SEED_ADMIN)], [52.9, runDuplicateCheck],
-    [52, (c) => classifyCase(c, "Media dimanipulasi / deepfake", ["Teknologi", "Politik"], SEED_ADMIN)],
+    [52, (c) => classifyCase(c, "Fitnah", ["Teknologi", "Politik"], SEED_ADMIN)],
     [51.5, (c) => assignAgencies(c, ["PDRM"], 48, "Semak keaslian video bersama unit forensik digital", SEED_ADMIN)],
     [50, start], [44, submit("PDRM mengesahkan video tersebut dijana menggunakan teknologi AI. Analisis forensik digital mendapati suara dan gerakan bibir tidak sepadan. Tiada cuti umum diumumkan oleh kerajaan.", [{ name: "laporan_forensik_digital.pdf", size: 512000 }])], [40, approve("PDRM")], [20, (c) => approveRebuttal(c, SEED_ADMIN)],
   ]);
@@ -592,7 +639,7 @@ function seedStore() {
   at(T - 50 * HOUR, () => { c = receiveCase({ id: "SBN-2026-0024", claim: "Mesej mendakwa tol di lebuh raya percuma sepanjang cuti sekolah bulan ini", reporter: "melvin.t@gmail.com", platform: "Telegram", evidence: ["poster_tol.png"], article: "toll" }); });
   walk(c, [
     [49, (c) => verifyCase(c, SEED_ADMIN)], [48.9, runDuplicateCheck],
-    [48, (c) => classifyCase(c, "Maklumat palsu", ["Pengangkutan"], SEED_ADMIN)],
+    [48, (c) => classifyCase(c, "Tidak segera", ["Pengangkutan"], SEED_ADMIN)],
     [47.5, (c) => assignAgencies(c, ["MOT"], 72, "", SEED_ADMIN)],
     [45, start], [30, submit("Kementerian Pengangkutan menegaskan tiada pengecualian tol diumumkan bagi cuti sekolah bulan ini. Poster yang tersebar menggunakan reka bentuk lama daripada kempen musim perayaan 2024 dan telah disunting. Pengguna lebuh raya diminta merujuk saluran rasmi kementerian dan syarikat konsesi.", [{ name: "kenyataan_mot_tol.pdf", size: 163840 }])],
     [6, approve("MOT")],
@@ -602,7 +649,7 @@ function seedStore() {
   at(T - 60 * HOUR, () => { c = receiveCase({ id: "SBN-2026-0027", claim: "Dakwaan jambatan di Kuantan runtuh akibat banjir kilat pagi tadi", reporter: "aziz.m@gmail.com", platform: "X (Twitter)", link: "https://x.com/contoh/status/000000", evidence: ["gambar_jambatan.jpg"], priority: "Tinggi" }); });
   walk(c, [
     [59, (c) => verifyCase(c, SEED_ADMIN)], [58.9, runDuplicateCheck],
-    [58.5, (c) => classifyCase(c, "Maklumat palsu", ["Bencana", "Pengangkutan"], SEED_ADMIN)],
+    [58.5, (c) => classifyCase(c, "Segera", ["Bencana", "Pengangkutan"], SEED_ADMIN)],
     [58, (c) => assignAgencies(c, ["JPS", "NADMA"], 48, "Sahkan status jambatan dan keadaan banjir semasa", SEED_ADMIN)],
     [55, start], [36, submit("JPS mengesahkan jambatan di Kuantan masih berfungsi dan tidak runtuh. Gambar yang tular diambil di lokasi lain pada tahun 2021. Beberapa jalan kampung ditutup sementara akibat banjir kilat.", [{ name: "laporan_pemeriksaan_jambatan.pdf", size: 286720 }])], [30, approve("JPS")],
     [20, changes("NADMA", "Sertakan status terkini laluan alternatif dan senarai jalan yang ditutup menurut Pusat Kawalan Operasi Bencana.")],
@@ -613,7 +660,7 @@ function seedStore() {
   at(T - 30 * HOUR, () => { c = receiveCase({ id: "SBN-2026-0033", claim: "Hantaran Facebook mendakwa vaksin HPV menyebabkan kemandulan dalam kalangan pelajar", reporter: "cikgu.lina@moe.edu.my", channel: "Sambungan pelayar", platform: "Facebook", evidence: ["hantaran_fb.png"], priority: "Tinggi" }); });
   walk(c, [
     [29, (c) => verifyCase(c, SEED_ADMIN)], [28.9, runDuplicateCheck],
-    [28.5, (c) => classifyCase(c, "Maklumat palsu", ["Kesihatan", "Pendidikan"], SEED_ADMIN)],
+    [28.5, (c) => classifyCase(c, "Segera", ["Kesihatan", "Pendidikan"], SEED_ADMIN)],
     [28, (c) => assignAgencies(c, ["KKM", "KPM"], 72, "Program imunisasi sekolah — perlu kenyataan bersama", SEED_ADMIN)],
     [26, start], [18, submit("Kementerian Kesihatan Malaysia menegaskan vaksin HPV adalah selamat dan tidak menyebabkan kemandulan. Vaksin ini telah digunakan dalam Program Imunisasi Kebangsaan sejak 2010 dan dipantau secara berterusan. Ibu bapa dinasihatkan merujuk maklumat rasmi KKM.", [{ name: "kenyataan_kkm_hpv.pdf", size: 204800 }, { name: "data_keselamatan_vaksin.xlsx", size: 61440 }], "Disemak bersama Bahagian Kawalan Penyakit; tiada laporan kesan sampingan serius berkaitan kemandulan.")],
   ]);
@@ -622,13 +669,17 @@ function seedStore() {
   at(T - 20 * HOUR, () => { c = receiveCase({ id: "SBN-2026-0035", claim: "Mesej tular mendakwa suntikan tambahan diwajibkan untuk semua murid sekolah rendah mulai Januari", reporter: "puan.rohana@gmail.com", platform: "WhatsApp", evidence: ["mesej_suntikan.jpg"], priority: "Tinggi" }); });
   walk(c, [
     [19.5, (c) => verifyCase(c, SEED_ADMIN)], [19.4, runDuplicateCheck],
-    [19, (c) => classifyCase(c, "Maklumat palsu", ["Kesihatan", "Pendidikan"], SEED_ADMIN)],
+    [19, (c) => classifyCase(c, "Segera", ["Kesihatan", "Pendidikan"], SEED_ADMIN)],
     [3, (c) => assignAgencies(c, ["KKM", "KPM"], 72, "Tular dalam kumpulan ibu bapa — perlu kenyataan bersama", SEED_ADMIN)],
   ]);
 
   // Classified, waiting for assignment
   at(T - 9 * HOUR, () => { c = receiveCase({ id: "SBN-2026-0038", claim: "SMS mendakwa akaun bank akan dibekukan jika maklumat tidak dikemas kini dalam 24 jam", reporter: "0123456789 (SMS)", channel: "Aplikasi mudah alih", platform: "SMS", evidence: ["sms_bank.jpg"], priority: "Tinggi" }); });
-  walk(c, [[8.5, (c) => verifyCase(c, SEED_ADMIN)], [8.4, runDuplicateCheck], [8, (c) => classifyCase(c, "Penipuan", ["Penipuan", "Ekonomi"], SEED_ADMIN)]]);
+  walk(c, [[8.5, (c) => verifyCase(c, SEED_ADMIN)], [8.4, runDuplicateCheck], [8, (c) => classifyCase(c, "Segera", ["Penipuan", "Ekonomi"], SEED_ADMIN)]]);
+
+  // Satire from a parody page, classified and waiting for assignment
+  at(T - 7 * HOUR, () => { c = receiveCase({ id: "SBN-2026-0039", claim: "Tangkapan skrin berita mendakwa penjawat awam diwajibkan tidur siang 30 minit setiap hari mulai tahun depan", reporter: "amirul.z@gmail.com", platform: "Facebook", evidence: ["tangkapan_skrin_berita.png"] }); });
+  walk(c, [[6.5, (c) => verifyCase(c, SEED_ADMIN)], [6.4, runDuplicateCheck], [6, (c) => classifyCase(c, "Satira", ["Politik"], SEED_ADMIN)]]);
 
   // Verified — the AI check will flag this as a duplicate of 0012
   at(T - 5 * HOUR, () => { c = receiveCase({ id: "SBN-2026-0041", claim: "Pautan bantuan digital RM500 tersebar semula dalam kumpulan Telegram", reporter: "danial.h@gmail.com", platform: "Telegram", evidence: ["telegram_rm500.png"], dupOf: "SBN-2026-0012", dupScore: 94 }); });

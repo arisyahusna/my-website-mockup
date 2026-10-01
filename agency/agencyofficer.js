@@ -40,6 +40,7 @@ function renderCases() {
     <div class="tabs" style="margin-top:22px">${LISTS.map(([k, label, fn]) => `<button data-tab="${k}" class="${k === listTab ? "on" : ""}">${label}<span class="count">${fn().length}</span></button>`).join("")}</div>
     ${caseTable(list, [
       ["ID kes", (c) => `<span class="mono">${c.id}</span>`],
+      ["Jenis kes", (c) => typeBadge(c.type)],
       ["Dakwaan", (c) => `<div class="claim-cell"><b>${esc(c.claim)}</b><small>${esc(c.platform)} · peneraju ${leadOf(c)} · ${c.assignments.map((a) => a.agency).join(", ")}</small></div>`],
       ["Status", (c) => agencyStatusBadge(c, assignmentOf(c, AG))],
       ["SLA", (c) => (pastAgencies(c) ? "—" : `${slaBadgeOf(assignmentOf(c, AG))}<br><small class="kpi-delta">${fmtDT(assignmentOf(c, AG).due)}</small>`)],
@@ -214,7 +215,7 @@ function bindCase(c, a) {
 }
 
 /* ---------- Router ---------- */
-const TITLES = { cases: "Kes agensi", activity: "Log aktiviti" };
+const TITLES = { cases: "Kes agensi", activity: "Log aktiviti", account: "Akaun saya" };
 function route() {
   const [view, id] = location.hash.slice(1).split("/");
   const v = view === "case" && id ? "case" : TITLES[view] ? view : "cases";
@@ -225,9 +226,10 @@ function route() {
   if (v === "cases") renderCases();
   if (v === "case") renderCase(decodeURIComponent(id));
   if (v === "activity") activityView(me, $("view-activity"));
+  if (v === "account") accountView(me, $("view-account"), me.roleId, me.agency);
 }
 window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
-$("global-q").addEventListener("input", () => { if (location.hash.startsWith("#case/") || location.hash === "#activity") location.hash = "#cases"; else renderCases(); });
+$("global-q").addEventListener("input", () => { if (location.hash.startsWith("#case/") || location.hash === "#activity" || location.hash === "#account") location.hash = "#cases"; else renderCases(); });
 
 bindShell(me, () => { commit(); route(); });
 commit();

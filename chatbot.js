@@ -1,6 +1,6 @@
-/* AIFA chatbot (demo only — no AI, no server). Load after articles.js on index.html and general-public/userhome.html.
+/* AIFA chatbot (demo only — no AI, no server). Load after articles.js on index.html.
    It matches what the user types against the fact-checks in articles.js and answers a few common questions.
-   Buttons with data-report reuse each page's own "Hantar dakwaan" handling (login prompt on index, report form on userhome). */
+   Buttons with data-report reuse the page's own "Hantar dakwaan" form. */
 
 (() => {
   const ROOT = new URL(".", document.currentScript.src).href; // site root, works from sub-folders too
@@ -102,7 +102,7 @@
       return { html: `Saya <b>AIFA</b> — <i>AI Fact-checking Assistant</i> bagi sebenarnya.my, portal semakan fakta di bawah MCMC.<br><br>Saya boleh:<ul><li>Mencari semakan fakta bagi dakwaan yang anda terima</li><li>Menunjukkan berita tular yang sedang disemak</li><li>Membantu anda menghantar dakwaan baharu</li></ul>`, chips: ["Semak dakwaan", "Berita tular hari ini"] };
     }
     if (short && has(t, ["lapor", "hantar dakwaan", "cara hantar", "report", "adu", "aduan"])) {
-      return { html: `Anda boleh menghantar dakwaan untuk disemak oleh MCMC dan agensi berkaitan:<ol><li>Tekan <b>Hantar dakwaan</b></li><li>Tampal dakwaan dan pautan (jika ada)</li><li>Lampirkan tangkapan skrin</li><li>Jejak status laporan di tab <b>Kes Dilaporkan</b></li></ol>${reportBtn}`, chips: ["Semak dakwaan", "Apa maksud label?"] };
+      return { html: `Anda boleh menghantar dakwaan untuk disemak oleh MCMC dan agensi berkaitan:<ol><li>Tekan <b>Hantar dakwaan</b></li><li>Tampal dakwaan dan pautan (jika ada)</li><li>Lampirkan tangkapan skrin (pilihan)</li><li>Masukkan e-mel anda — nombor kes dan setiap kemas kini dihantar melalui e-mel</li></ol>${reportBtn}`, chips: ["Semak dakwaan", "Apa maksud label?"] };
     }
     if (short && has(t, ["tular", "trending", "terkini", "popular"])) {
       return { html: `Ini antara dakwaan yang paling banyak dicari hari ini:${hot.slice(0, 3).map((h) => storyCard(byId[h.id])).join("")}`, chips: CHIPS_AFTER };

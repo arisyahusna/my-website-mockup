@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ms">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Panduan | SEBENARNYA.MY</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/webp" href="../image/icon.png">
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+    <div class="strip">
+        <div class="wrap">
+            <div class="ticker">Bukan semuanya benar di internet. <span>Tidak</span>pasti?
+                <span>Jangan</span>kongsi.
+            </div>
+            <div class="strip-right">
+                <a href="../extension.html">
+                    <span>Sambungan pelayar</span>
+                </a>
+                <div class="date"><b id="today"></b></div>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="wrap nav">
+            <a href="../index.html" class="logo" aria-label="Laman utama sebenarnya.my">
+                <img src="../image/logo.png" alt="sebenarnya.my — Tidak Pasti Jangan Kongsi" class="logo-img">
+            </a>
+
+            <form class="search" action="../index.html" role="search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M20 20l-3.5-3.5" />
+                </svg>
+                <input name="q" type="search" placeholder="Cari dakwaan, topik atau pautan…" autocomplete="off">
+            </form>
+
+            <a href="../index.html#hantar" class="btn-login">Hantar dakwaan</a>
+        </div>
+    </header>
+
+
+    <main>
+        <!-- ===== Hero (filled from infocontent.js — edited by the MCMC Content Publisher) ===== -->
+        <section class="ext-hero">
+            <div class="wrap page-hero">
+                <a href="info.html" class="back-link">← Info &amp; Panduan</a>
+                <span class="eyebrow">Panduan</span>
+                <h1 id="g-title"></h1>
+                <p class="lede" id="g-lede"></p>
+                <div class="guide-meta" id="g-meta"></div>
+            </div>
+        </section>
+
+        <div class="wrap info-body">
+            <article class="guide-article" id="g-body"></article>
+        </div>
+    </main>
+
+    <footer>
+        <div class="wrap">
+            <span>© 2023 - Suruhanjaya Komunikasi dan Multimedia Malaysia — Semak sebelum kongsi.</span>
+        </div>
+    </footer>
+
+    <script src="../infocontent.js"></script>
+    <script>
+        // Text, video and closing banner for this guide live in infocontent.js
+        liveInfo(() => renderGuidePage("berita-palsu"));
+        document.getElementById("today").textContent = new Date().toLocaleDateString("ms-MY", {
+            weekday: "long", day: "numeric", month: "long", year: "numeric"
+        });
+    </script>
+</body>
+
+</html>

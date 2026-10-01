@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ms">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Logo | SEBENARNYA.MY</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/webp" href="image/icon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="strip">
+        <div class="wrap">
+            <div class="ticker">Bukan semuanya benar di internet. <span>Tidak</span>pasti?
+                <span>Jangan</span>kongsi.
+            </div>
+            <div class="strip-right">
+                <a href="extension.html">
+                    <span>Sambungan pelayar</span>
+                </a>
+                <div class="date"><b id="today"></b></div>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="wrap nav">
+            <a href="index.html" class="logo" aria-label="Laman utama sebenarnya.my">
+                <img src="image/logo.png" alt="sebenarnya.my — Tidak Pasti Jangan Kongsi" class="logo-img">
+            </a>
+
+            <form class="search" action="index.html" role="search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M20 20l-3.5-3.5" />
+                </svg>
+                <input name="q" type="search" placeholder="Cari dakwaan, topik atau pautan…" autocomplete="off">
+            </form>
+
+            <a href="index.html#hantar" class="btn-login">Hantar dakwaan</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- ===== Hero ===== -->
+        <section class="ext-hero">
+            <div class="wrap page-hero">
+                <a href="index.html" class="back-link">← Kembali ke laman utama</a>
+                <span class="eyebrow">Logo</span>
+                <h1>Paparkan logo kami di laman web anda</h1>
+                <p class="lede">Bantu orang ramai menyemak sebelum berkongsi. Muat turun logo rasmi sebenarnya.my
+                    secara percuma dan pautkan ke laman kami dari laman web, blog atau bahan kempen anda.</p>
+            </div>
+        </section>
+
+        <div class="wrap info-body">
+
+            <!-- ===== Downloads ===== -->
+            <section class="info-section">
+                <div class="ext-head left">
+                    <h2>Muat turun</h2>
+                </div>
+
+                <div class="asset-grid">
+                    <article class="asset">
+                        <div class="asset-previews">
+                            <div class="asset-bg light"><img src="image/logo.png" alt="Logo penuh sebenarnya.my"
+                                    id="logo-img"></div>
+                            <div class="asset-bg grey"><img src="image/logo.png" alt=""></div>
+                        </div>
+                        <div class="asset-body">
+                            <div>
+                                <h3>Logo penuh</h3>
+                                <p>Untuk pengepala, kaki laman dan bahan bercetak. <span class="dim"
+                                        id="logo-dim"></span></p>
+                            </div>
+                            <div class="asset-actions">
+                                <a class="dl-btn primary" href="image/logo.png" download="sebenarnya-my-logo.png">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14" />
+                                    </svg>
+                                    Muat turun logo (PNG)
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="asset">
+                        <div class="asset-previews">
+                            <div class="asset-bg light"><img src="image/icon.png" alt="Ikon sebenarnya.my"
+                                    id="icon-img"></div>
+                            <div class="asset-bg brand"><img src="image/icon.png" alt="" class="icon-preview"></div>
+                        </div>
+                        <div class="asset-body">
+                            <div>
+                                <h3>Ikon</h3>
+                                <p>Untuk ruang kecil seperti lencana, butang dan ikon aplikasi. <span class="dim"
+                                        id="icon-dim"></span></p>
+                            </div>
+                            <div class="asset-actions">
+                                <button class="dl-btn primary" data-png="image/icon.png" data-size="0"
+                                    data-name="sebenarnya-my-icon.png">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14" />
+                                    </svg>
+                                    Muat turun ikon (PNG)
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="wrap">
+            <span>© 2023 - Suruhanjaya Komunikasi dan Multimedia Malaysia — Semak sebelum kongsi.</span>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        const $ = id => document.getElementById(id);
+        $("today").textContent = new Date().toLocaleDateString("ms-MY", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+        let toastTimer;
+        function toast(msg) {
+            $("toast").textContent = msg;
+            $("toast").classList.add("show");
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => $("toast").classList.remove("show"), 2600);
+        }
+
+        // Show the real file sizes once the images load
+        const showDim = (img, el) => {
+            const set = () => { if (img.naturalWidth) $(el).textContent = `${img.naturalWidth} × ${img.naturalHeight} px`; };
+            img.complete ? set() : img.addEventListener("load", set);
+        };
+        showDim($("logo-img"), "logo-dim");
+        showDim($("icon-img"), "icon-dim");
+
+        /* ---------- Downloads ---------- */
+        function saveBlob(blob, name) {
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = name;
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+        }
+
+        // The icon is redrawn at the chosen size (0 = original size) and saved as a real PNG
+        async function downloadPng(src, size, name) {
+            const img = new Image();
+            img.src = src;
+            try {
+                await img.decode();
+                size = size || img.naturalWidth;
+                const canvas = document.createElement("canvas");
+                canvas.width = canvas.height = size;
+                const ctx = canvas.getContext("2d");
+                ctx.imageSmoothingQuality = "high";
+                ctx.drawImage(img, 0, 0, size, size);
+                canvas.toBlob(blob => { blob ? saveBlob(blob, name) : fallback(); }, "image/png");
+            } catch (e) {
+                fallback();
+            }
+            // Browsers block canvas export for files opened straight from disk; serve the original file instead
+            function fallback() {
+                const a = document.createElement("a");
+                a.href = src;
+                a.download = name.replace(/(-\d+)?\.png$/, ".webp");
+                a.click();
+            }
+            toast(`Memuat turun ${name}`);
+        }
+
+        document.querySelectorAll("[data-png]").forEach(b => b.addEventListener("click", () =>
+            downloadPng(b.dataset.png, +b.dataset.size, b.dataset.name)));
+    </script>
+</body>
+
+</html>
