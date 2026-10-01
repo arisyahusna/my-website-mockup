@@ -153,6 +153,17 @@ function niceScale(max, ticks = 4) {
   return { step, max: step * Math.ceil(max / step) };
 }
 
+// Charts play a short entrance animation each time they scroll into view (CSS in admin.css, .viz-anim).
+// A redraw while visible (resize, table toggle) keeps the "in" class, so it does not replay.
+const vizObserver = "IntersectionObserver" in window
+  ? new IntersectionObserver((entries) => entries.forEach((e) => e.target.classList.toggle("in", e.isIntersecting)), { threshold: 0.25 })
+  : null;
+function animateChart(el) {
+  if (!vizObserver || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  el.classList.add("viz-anim");
+  vizObserver.observe(el);
+}
+
 // Line chart: 2px lines, end markers with a surface ring, direct end labels, crosshair + tooltip
 function lineChart(el, o) {
   const W = Math.max(320, el.clientWidth), H = o.height || 240;
@@ -164,7 +175,7 @@ function lineChart(el, o) {
   let s = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="${esc(o.aria)}">`;
   if (o.highlight != null) {
     const bw = (W - m.l - m.r) / (n - 1);
-    s += `<rect x="${x(o.highlight) - bw / 2}" y="${m.t}" width="${bw}" height="${H - m.t - m.b}" fill="#f2f5fa"/>`;
+    s += `<rect x="${x(o.highlight) - bw / 2}" y="${m.t}" width="${bw}" height="${H - m.t - m.b}" fill="rgba(0, 117, 201, 0.06)"/>`;
   }
   for (let v = 0; v <= max; v += step)
     s += `<line class="${v === 0 ? "base-line" : "grid-line"}" x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}"/><text class="tick" x="${m.l - 8}" y="${y(v) + 4}" text-anchor="end">${fmtK(v)}</text>`;
@@ -173,9 +184,9 @@ function lineChart(el, o) {
 
   o.series.forEach((sr) => {
     const pts = sr.values.map((v, i) => `${x(i)},${y(v)}`);
-    if (o.area) s += `<path d="M${x(0)},${y(0)} L${pts.join(" L")} L${x(n - 1)},${y(0)} Z" fill="${sr.color}" opacity="0.08"/>`;
-    s += `<path d="M${pts.join(" L")}" fill="none" stroke="${sr.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
-    s += `<circle cx="${x(n - 1)}" cy="${y(sr.values[n - 1])}" r="4" fill="${sr.color}" stroke="#fff" stroke-width="2"/>`;
+    if (o.area) s += `<path class="series-area" d="M${x(0)},${y(0)} L${pts.join(" L")} L${x(n - 1)},${y(0)} Z" fill="${sr.color}" opacity="0.1"/>`;
+    s += `<path class="series-line" pathLength="1" d="M${pts.join(" L")}" fill="none" stroke="${sr.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    s += `<circle class="series-end" cx="${x(n - 1)}" cy="${y(sr.values[n - 1])}" r="4" fill="${sr.color}" stroke="#fff" stroke-width="2"/>`;
   });
   // direct labels at the line ends, nudged apart so they never collide
   if (o.series.length > 1) {
@@ -191,6 +202,7 @@ function lineChart(el, o) {
   s += o.series.map((sr) => `<circle class="hover-dot" r="4" fill="${sr.color}" stroke="#fff" stroke-width="2" visibility="hidden"/>`).join("");
   s += `<rect class="hit" x="${m.l - 10}" y="0" width="${W - m.l - m.r + 20}" height="${H - m.b}"/></svg>`;
   el.innerHTML = s;
+  animateChart(el);
 
   const svg = el.querySelector("svg"), cross = svg.querySelector(".crosshair"), dots = svg.querySelectorAll(".hover-dot");
   const hide = () => { cross.setAttribute("visibility", "hidden"); dots.forEach((d) => d.setAttribute("visibility", "hidden")); hideTip(); };
@@ -220,7 +232,7 @@ function barChart(el, o) {
     const path = w > 0
       ? `M${m.l},${y0 + 5} h${w - r} a${r},${r} 0 0 1 ${r},${r} v${bh - 2 * r} a${r},${r} 0 0 1 -${r},${r} h-${w - r} z`
       : "";
-    s += `<g class="bar-row" tabindex="0" data-i="${i}" aria-label="${esc(d.label)}: ${esc((o.fmt || fmtN)(d.value))}">
+    s += `<g class="bar-row" tabindex="0" data-i="${i}" style="--i:${i}" aria-label="${esc(d.label)}: ${esc((o.fmt || fmtN)(d.value))}">
       <rect x="0" y="${y0}" width="${W}" height="${rowH}" fill="transparent"/>
       <text class="tick" x="${m.l - 10}" y="${y0 + rowH / 2 + 4}" text-anchor="end" style="font-size:12px;fill:var(--ink-2)">${esc(d.short || d.label)}</text>
       ${path ? `<path class="bar" d="${path}" fill="${o.color || "var(--series-1)"}"/>` : ""}
@@ -233,6 +245,7 @@ function barChart(el, o) {
   }
   s += "</svg>";
   el.innerHTML = s;
+  animateChart(el);
   el.querySelectorAll(".bar-row").forEach((g) => {
     const d = o.items[+g.dataset.i];
     const html = () => `<b>${esc(d.label)}</b>` + (o.tip ? o.tip(d) : tipRow(o.color || "var(--series-1)", o.name || "Nilai", (o.fmt || fmtN)(d.value)));
@@ -252,12 +265,13 @@ function heatChart(el, o) {
   o.rows.forEach((row, ri) => {
     h += `<div class="hrow-label">${esc(row)}</div>`;
     o.values[ri].forEach((v, ci) => {
-      h += `<div class="cell" tabindex="0" data-r="${ri}" data-c="${ci}" style="background:${RAMP[cls(v)]}" aria-label="${esc(row)}, minggu ${esc(o.cols[ci])}: ${v} laporan"></div>`;
+      h += `<div class="cell" tabindex="0" data-r="${ri}" data-c="${ci}" style="background:${RAMP[cls(v)]};--d:${ri + ci}" aria-label="${esc(row)}, minggu ${esc(o.cols[ci])}: ${v} laporan"></div>`;
     });
   });
   h += `<div></div>` + o.cols.map((c) => `<div class="hcol-label">${esc(c)}</div>`).join("") + `</div>`;
   h += `<div class="heat-legend"><span>Rendah</span><span class="ramp">${RAMP.map((c) => `<i style="background:${c}"></i>`).join("")}</span><span>Tinggi (${fmtN(max)} laporan/minggu)</span></div>`;
   el.innerHTML = h;
+  animateChart(el);
   el.querySelectorAll(".cell").forEach((c) => {
     const html = () => `<b>${esc(o.rows[+c.dataset.r])}</b>` + tipRow(null, `Minggu ${o.cols[+c.dataset.c]}`, `${fmtN(o.values[+c.dataset.r][+c.dataset.c])} laporan`);
     c.addEventListener("mousemove", (e) => showTip(html(), e.clientX, e.clientY));
@@ -413,12 +427,12 @@ function renderDashboard() {
       max: 100, target: SLA_TARGET, unit: "%", fmt: (v) => `${v}%`, aria: "Pematuhan SLA mengikut agensi",
       tip: (d) => tipRow("var(--series-1)", "Pematuhan SLA", `${d.value}%`) + tipRow(null, "Kes diagihkan", fmtN(d.p.cases)) + tipRow(null, "Purata masa respons", `${d.p.respH} jam`) + tipRow(null, "Status", slaLevel(d.value).label),
     }),
-    "ch-stage": () => barChart($("ch-stage"), { items: stageHours(mi).map((d) => ({ ...d, short: d.label })), labelW: 150, fmt: (v) => `${v} j`, name: "Purata jam", aria: "Purata masa setiap peringkat" }),
+    "ch-stage": () => barChart($("ch-stage"), { items: stageHours(mi).map((d) => ({ ...d, short: d.label })), labelW: 150, color: "var(--series-2)", fmt: (v) => `${v} j`, name: "Purata jam", aria: "Purata masa setiap peringkat" }),
     "ch-dau": () => lineChart($("ch-dau"), {
       labels: ext.dau.map((_, d) => String(d + 1)), tipLabels: ext.dau.map((_, d) => `${d + 1} ${MONTHS[mi]}`), labelEvery: 5, area: true, height: 200,
-      aria: "Pengguna aktif harian sambungan pelayar", series: [{ name: "Pengguna aktif", color: "var(--series-1)", values: ext.dau }],
+      aria: "Pengguna aktif harian sambungan pelayar", series: [{ name: "Pengguna aktif", color: "var(--series-2)", values: ext.dau }],
     }),
-    "ch-browsers": () => barChart($("ch-browsers"), { items: ext.browsers, labelW: 64, name: "Pemasangan", aria: "Pemasangan mengikut pelayar" }),
+    "ch-browsers": () => barChart($("ch-browsers"), { items: ext.browsers, labelW: 64, color: "var(--series-2)", name: "Pemasangan", aria: "Pemasangan mengikut pelayar" }),
     "ch-heat": () => heatChart($("ch-heat"), { rows: TOPICS_HEAT, cols: heat.weeks, values: heat.values }),
   };
   const tables = {
@@ -431,7 +445,7 @@ function renderDashboard() {
     "ch-heat": () => tableHTML(["Topik", ...heat.weeks], TOPICS_HEAT.map((t, i) => [t, ...heat.values[i].map(fmtN)]), heat.weeks.map((_, i) => i + 1)),
   };
   Object.values(draws).forEach((f) => f());
-  document.querySelectorAll("[data-toggle]").forEach((b) => b.addEventListener("click", () => {
+  $("view-dashboard").querySelectorAll("[data-toggle]").forEach((b) => b.addEventListener("click", () => {
     const id = b.dataset.toggle, showTable = b.getAttribute("aria-pressed") !== "true";
     b.setAttribute("aria-pressed", showTable);
     b.textContent = showTable ? "Carta" : "Jadual";
@@ -887,7 +901,7 @@ function renderUsers() {
         <td title="${u.lastLogin ? fmtDT(u.lastLogin) : ""}">${u.lastLogin ? ago(u.lastLogin) : "Belum pernah"}</td>
         <td><div class="user-actions">
           <a href="#user/${u.id}" class="btn-g btn-sm">Edit</a>
-          ${isMe(u) ? "" : `<button class="btn-sm ${u.status === "aktif" ? "btn-g" : "btn-s"}" data-toggle="${u.id}">${u.status === "aktif" ? "Nyahaktifkan" : "Aktifkan"}</button>`}
+          ${isMe(u) ? "" : `<button class="btn-sm ${u.status === "aktif" ? "btn-g" : "btn-s"}" data-ustatus-toggle="${u.id}">${u.status === "aktif" ? "Nyahaktifkan" : "Aktifkan"}</button>`}
         </div></td></tr>`).join("") : `<tr><td colspan="6" class="empty-row">Tiada pengguna yang sepadan.</td></tr>`}</tbody>
     </table></div></div>
     <p class="demo-note">Akaun yang tidak aktif tidak boleh log masuk, dan sesi yang sedang dibuka akan dilog keluar serta-merta. Semua perubahan akaun direkodkan dalam log audit.</p>`;
@@ -908,8 +922,8 @@ function renderUsers() {
     tr.addEventListener("click", (e) => { if (!e.target.closest("a, button")) open(); });
     tr.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target === tr) open(); });
   });
-  root.querySelectorAll("[data-toggle]").forEach((b) => b.addEventListener("click", () => {
-    const u = getUser(b.dataset.toggle), off = u.status === "aktif";
+  root.querySelectorAll("[data-ustatus-toggle]").forEach((b) => b.addEventListener("click", () => {
+    const u = getUser(b.dataset.ustatusToggle), off = u.status === "aktif";
     if (off && !confirm(`Nyahaktifkan akaun ${u.name} (${u.email})?\n\nPengguna ini tidak akan dapat log masuk sehingga akaun diaktifkan semula.`)) return;
     setUserStatus(u, off ? "tidak_aktif" : "aktif", me, off ? "Dinyahaktifkan oleh MCMC Admin" : "");
     saveUsers();

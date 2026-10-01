@@ -2314,3 +2314,260 @@ span.lbl {
   font-size: 13.5px;
   color: var(--ink-2);
 }
+
+/* ==========================================================================
+   Theme: brand colours + glass surfaces for every MCMC and agency portal.
+   Pink #e63f6a, blue #0075c9 and amber #f5a901. Charts use blue + pink only
+   (validated pair); amber is too light for marks on white, so it stays an accent.
+   ========================================================================== */
+.admin-body {
+  --pink: #e63f6a;
+  --pink-ink: #c8325f; /* white text on pink stays readable */
+  --blue: #0075c9;
+  --amber: #f5a901;
+  --series-1: var(--blue);
+  --series-2: var(--pink);
+  --glass: rgba(255, 255, 255, 0.58);
+  --glass-strong: rgba(255, 255, 255, 0.86);
+  --glass-line: rgba(255, 255, 255, 0.78);
+  --glass-shadow:
+    0 10px 30px rgba(28, 39, 76, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  --glass-blur: blur(18px) saturate(160%);
+  position: relative;
+  background: #f3f5fa;
+}
+/* soft colour fields behind the glass */
+.admin-body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(38rem 30rem at 8% -6%, rgba(0, 117, 201, 0.2), transparent 70%),
+    radial-gradient(34rem 28rem at 96% 4%, rgba(230, 63, 106, 0.17), transparent 70%),
+    radial-gradient(40rem 30rem at 70% 108%, rgba(245, 169, 1, 0.2), transparent 70%),
+    radial-gradient(28rem 24rem at 30% 70%, rgba(230, 63, 106, 0.07), transparent 70%);
+}
+
+/* ---------- Glass surfaces ---------- */
+.admin-body .card,
+.admin-body .kpi,
+.admin-body .report-item,
+.admin-body .steps li,
+.admin-body .ai-box,
+.admin-body .notif-preview,
+.admin-body .media-list li {
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+/* glass inside glass would blur twice; inner pieces are just a lighter tint */
+.admin-body .card .card,
+.admin-body .card .report-item,
+.admin-body .card .media-list li,
+.admin-body .card .ai-box,
+.admin-body .card .notif-preview {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.admin-body .adm-side {
+  background: rgba(255, 255, 255, 0.55);
+  border-right: 1px solid var(--glass-line);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.admin-body .adm-top {
+  background: rgba(243, 245, 250, 0.55);
+  border-bottom: 1px solid var(--glass-line);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.admin-body .bell-panel,
+.admin-body .viz-tip {
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-line);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.admin-body .mini-kpi,
+.admin-body .mode-pick label,
+.admin-body .pick label,
+.admin-body .type-chip,
+.admin-body .btn-s,
+.admin-body .bell,
+.admin-body .ctl,
+.admin-body .adm-top .search input {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+.admin-body .adm-table th {
+  background: rgba(255, 255, 255, 0.82);
+}
+.admin-body .adm-table tr.clickable:hover td {
+  background: rgba(0, 117, 201, 0.05);
+}
+.admin-body .adm-table tr.row-off td {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* ---------- Brand accents ---------- */
+.admin-body .adm-nav a {
+  position: relative;
+}
+.admin-body .adm-nav a:hover {
+  background: rgba(255, 255, 255, 0.65);
+}
+.admin-body .adm-nav a.active {
+  background: linear-gradient(90deg, rgba(0, 117, 201, 0.14), rgba(230, 63, 106, 0.1));
+  color: var(--blue);
+}
+.admin-body .adm-nav a.active::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(180deg, var(--blue), var(--pink));
+}
+.admin-body .adm-nav .nav-badge {
+  background: var(--pink-ink);
+}
+.admin-body .adm-nav .nav-badge.muted {
+  background: rgba(245, 169, 1, 0.18);
+  border-color: rgba(245, 169, 1, 0.35);
+  color: #7a5000;
+}
+.admin-body .avatar {
+  background: linear-gradient(135deg, var(--pink), var(--amber));
+}
+.admin-body .acct-avatar {
+  background: linear-gradient(135deg, rgba(0, 117, 201, 0.16), rgba(230, 63, 106, 0.16));
+}
+.admin-body .bell-count {
+  background: var(--pink-ink);
+}
+.admin-body .btn-p {
+  background: linear-gradient(135deg, var(--blue), var(--pink-ink));
+  box-shadow: 0 4px 14px rgba(200, 50, 95, 0.22);
+}
+.admin-body .tabs button.on {
+  border-image: linear-gradient(90deg, var(--blue), var(--pink), var(--amber)) 1;
+}
+/* KPI tiles take the three brand colours in turn */
+.admin-body .kpi,
+.admin-body .mini-kpi {
+  --accent: var(--blue);
+  position: relative;
+  overflow: hidden;
+}
+.admin-body .kpi:nth-child(3n + 2),
+.admin-body .mini-kpi:nth-child(3n + 2) {
+  --accent: var(--pink);
+}
+.admin-body .kpi:nth-child(3n),
+.admin-body .mini-kpi:nth-child(3n) {
+  --accent: var(--amber);
+}
+.admin-body .kpi::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: var(--accent);
+}
+.admin-body .kpi::after {
+  content: "";
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.1;
+  pointer-events: none;
+}
+.admin-body .mini-kpi {
+  border-left: 3px solid var(--accent);
+}
+.admin-body .card-head h2::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin: 0 8px 2px 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--pink));
+  vertical-align: middle;
+}
+
+/* ---------- Charts animate in as they scroll into view (systemadmin.js animateChart) ---------- */
+.viz-anim .series-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.3s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+.viz-anim .series-area,
+.viz-anim .series-end,
+.viz-anim .dlabel,
+.viz-anim .vlabel {
+  opacity: 0;
+  transition: opacity 0.5s ease 0.9s;
+}
+.viz-anim .series-area {
+  transition-delay: 0.4s;
+}
+.viz-anim .bar {
+  transform: scaleX(0);
+  transform-box: fill-box;
+  transform-origin: left center;
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) calc(var(--i, 0) * 70ms);
+}
+.viz-anim .vlabel {
+  transition-delay: calc(0.5s + var(--i, 0) * 70ms);
+}
+.viz-anim .cell {
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity 0.4s ease calc(var(--d, 0) * 22ms),
+    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) calc(var(--d, 0) * 22ms);
+}
+.viz-anim.in .series-line {
+  stroke-dashoffset: 0;
+}
+.viz-anim.in .series-end,
+.viz-anim.in .dlabel,
+.viz-anim.in .vlabel,
+.viz-anim.in .cell {
+  opacity: 1;
+}
+.viz-anim.in .series-area {
+  opacity: 0.1;
+}
+.viz-anim.in .bar,
+.viz-anim.in .cell {
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .viz-anim * {
+    transition: none !important;
+  }
+}
+
+/* No backdrop-filter support: fall back to solid white cards */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .admin-body .card,
+  .admin-body .kpi,
+  .admin-body .adm-side,
+  .admin-body .bell-panel {
+    background: #fff;
+  }
+}

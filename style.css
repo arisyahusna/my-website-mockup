@@ -4651,3 +4651,390 @@ footer nav a:hover {
   color: #8a5a00;
   font-weight: 600;
 }
+
+/* ==========================================================================
+   Public site theme (body.site-glass: index, allarticles, info/*).
+   Glass cards over soft colour fields. Soft tints #7bb3e1, #f8a9ba, #ffd88e;
+   strong accents #0075c9, #e63f6a, #f5a901. Verdict colours are unchanged.
+   ========================================================================== */
+.site-glass {
+  --pink: #e63f6a;
+  --pink-ink: #c8325f; /* white text on pink stays readable */
+  --blue: #0075c9;
+  --amber: #f5a901;
+  --amber-ink: #b77c00;
+  --soft-blue: #7bb3e1;
+  --soft-pink: #f8a9ba;
+  --soft-amber: #ffd88e;
+  --brand-tint: rgba(123, 179, 225, 0.16);
+  --surface: rgba(255, 255, 255, 0.55);
+  --line: rgba(17, 19, 24, 0.08);
+  --glass: rgba(255, 255, 255, 0.6);
+  --glass-strong: rgba(255, 255, 255, 0.88);
+  --glass-line: rgba(255, 255, 255, 0.8);
+  --glass-shadow:
+    0 10px 30px rgba(28, 39, 76, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --glass-blur: blur(18px) saturate(160%);
+  --accent-grad: linear-gradient(135deg, var(--blue), var(--pink-ink));
+  position: relative;
+  background: #f7f8fc;
+}
+.site-glass::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(40rem 32rem at 4% 0%, rgba(123, 179, 225, 0.55), transparent 70%),
+    radial-gradient(36rem 30rem at 100% 12%, rgba(248, 169, 186, 0.5), transparent 70%),
+    radial-gradient(44rem 34rem at 62% 106%, rgba(255, 216, 142, 0.55), transparent 70%),
+    radial-gradient(30rem 26rem at 30% 60%, rgba(248, 169, 186, 0.18), transparent 70%);
+}
+
+/* ---------- Glass surfaces ---------- */
+.site-glass .card,
+.site-glass .hero,
+.site-glass .panel,
+.site-glass .side-card,
+.site-glass .art-row,
+.site-glass .guide-card,
+.site-glass .info-card,
+.site-glass .article,
+.site-glass > footer {
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.site-glass > header {
+  background: rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid var(--glass-line);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.site-glass .modal,
+.site-glass .aifa-panel,
+.site-glass .aifa-hint {
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.site-glass .card {
+  padding: 12px 12px 14px;
+  border-radius: 16px;
+}
+.site-glass .card-img {
+  border-radius: 12px;
+}
+.site-glass .card:hover {
+  box-shadow:
+    0 16px 36px rgba(28, 39, 76, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+.site-glass .hero {
+  border-radius: 18px;
+}
+.site-glass .article {
+  padding: 28px 32px;
+  border-radius: 18px;
+}
+.site-glass .art-row {
+  padding: 16px;
+  margin-bottom: 14px;
+  border-radius: 16px;
+}
+.site-glass .art-row:hover {
+  background: rgba(255, 255, 255, 0.75);
+}
+.site-glass .side-card:hover {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: var(--glass-line);
+}
+.site-glass .ext-hero {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0));
+  border-bottom: 1px solid var(--glass-line);
+}
+.site-glass .search input,
+.site-glass .select-wrap select,
+.site-glass .date-range label,
+.site-glass .filters button:not(.on),
+.site-glass .act-btn:not(.on),
+.site-glass .chips a {
+  background-color: rgba(255, 255, 255, 0.62);
+}
+.site-glass .search input:focus {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+/* ---------- Brand accents ---------- */
+.site-glass .strip {
+  background: linear-gradient(90deg, var(--blue), #3d5fb0 55%, var(--pink-ink));
+}
+.site-glass .btn-login,
+.site-glass .btn-primary,
+.site-glass .filters button.on,
+.site-glass .act-btn.on,
+.site-glass .aifa-msg.user .aifa-bubble {
+  background: var(--accent-grad);
+  border-color: transparent;
+  color: #fff;
+}
+.site-glass .btn-login {
+  box-shadow: 0 6px 18px rgba(200, 50, 95, 0.22);
+}
+.site-glass .aifa-launch {
+  background: linear-gradient(135deg, var(--blue), var(--pink));
+}
+.site-glass .cats a.active {
+  border-image: linear-gradient(90deg, var(--blue), var(--pink), var(--amber)) 1;
+}
+.site-glass .hero-img .tag {
+  background: var(--pink-ink);
+}
+.site-glass .claim {
+  background: rgba(123, 179, 225, 0.18);
+}
+/* "Paling Dicari" ranks take the three colours */
+.site-glass .hot-list li::before {
+  color: var(--soft-blue);
+}
+.site-glass .hot-list li:nth-child(1)::before {
+  color: var(--pink);
+}
+.site-glass .hot-list li:nth-child(2)::before {
+  color: var(--blue);
+}
+.site-glass .hot-list li:nth-child(3)::before {
+  color: var(--amber-ink);
+}
+.site-glass .panel h2 .flame {
+  color: var(--pink);
+}
+/* sidebar call-to-action and the info banners */
+.site-glass .report,
+.site-glass .info-cta {
+  position: relative;
+  overflow: hidden;
+  background: var(--accent-grad);
+}
+.site-glass .report::after,
+.site-glass .info-cta::after {
+  content: "";
+  position: absolute;
+  right: -110px;
+  bottom: -130px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: var(--soft-amber);
+  opacity: 0.3;
+  pointer-events: none;
+}
+.site-glass .report > *,
+.site-glass .info-cta > * {
+  position: relative;
+  z-index: 1;
+}
+/* side cards and guide covers use the soft tints */
+.site-glass .side-card-ic {
+  background: rgba(123, 179, 225, 0.25);
+}
+.site-glass .side-card:nth-of-type(2) .side-card-ic {
+  background: rgba(248, 169, 186, 0.3);
+}
+.site-glass .guide-card {
+  --tone-bg: rgba(123, 179, 225, 0.28);
+}
+.site-glass .guide-card.amber {
+  --tone-bg: rgba(255, 216, 142, 0.45);
+}
+.site-glass .guide-card.green {
+  --tone-bg: rgba(18, 128, 74, 0.12);
+}
+.site-glass .guide-card.red {
+  --tone: var(--pink-ink);
+  --tone-bg: rgba(248, 169, 186, 0.38);
+}
+.site-glass .guide-card.purple {
+  --tone-bg: rgba(107, 63, 184, 0.12);
+}
+.site-glass .article-foot {
+  background: linear-gradient(135deg, rgba(123, 179, 225, 0.22), rgba(248, 169, 186, 0.22));
+}
+/* AIFA chatbot */
+.site-glass .aifa-head {
+  background: var(--accent-grad);
+}
+.site-glass .aifa-body {
+  background: rgba(247, 248, 252, 0.6);
+}
+.site-glass .aifa-bubble,
+.site-glass .aifa-day,
+.site-glass .aifa-chips button {
+  background: rgba(255, 255, 255, 0.85);
+}
+.site-glass .aifa-card {
+  background: rgba(255, 255, 255, 0.7);
+}
+.site-glass .aifa-card:hover,
+.site-glass .aifa-chips button:hover {
+  background: rgba(248, 169, 186, 0.22);
+}
+.site-glass .aifa-action {
+  background: var(--accent-grad);
+}
+.site-glass .aifa-input {
+  background: rgba(255, 255, 255, 0.75);
+}
+.site-glass .aifa-launch {
+  box-shadow: 0 10px 26px rgba(200, 50, 95, 0.32);
+}
+.site-glass .aifa-input button {
+  background: var(--accent-grad);
+}
+.site-glass .aifa-foot {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+/* logo.html: download cards and buttons */
+.site-glass .asset {
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.site-glass .asset-body {
+  border-top-color: var(--glass-line);
+}
+/* the previews show the logo on real backgrounds, so they stay solid */
+.site-glass .asset-bg.light {
+  background: #fff;
+}
+.site-glass .asset-bg.grey {
+  background: #eef0f5;
+  border-left-color: var(--glass-line);
+}
+.site-glass .asset-bg.brand {
+  background: linear-gradient(135deg, rgba(123, 179, 225, 0.45), rgba(248, 169, 186, 0.45));
+  border-left-color: var(--glass-line);
+}
+.site-glass .dl-btn {
+  background: rgba(255, 255, 255, 0.62);
+}
+.site-glass .dl-btn.primary {
+  background: var(--accent-grad);
+  box-shadow: 0 6px 18px rgba(200, 50, 95, 0.22);
+}
+.site-glass .dl-btn.primary:hover {
+  background: var(--accent-grad);
+  filter: brightness(1.08);
+}
+
+/* extension.html: install button, browser mock-up, steps, features, browser cards */
+.site-glass .steps li,
+.site-glass .feature,
+.site-glass .browser {
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.site-glass .feature {
+  padding: 22px;
+  border-radius: 14px;
+}
+.site-glass .mock {
+  background: var(--glass-strong);
+  border-color: var(--glass-line);
+  box-shadow: 0 24px 60px rgba(200, 50, 95, 0.12);
+}
+.site-glass .mock-pop {
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.site-glass .ext-install,
+.site-glass .browser.detected .browser-btn {
+  background: var(--accent-grad);
+  border-color: transparent;
+  color: #fff;
+}
+.site-glass .ext-install {
+  box-shadow: 0 6px 18px rgba(200, 50, 95, 0.22);
+}
+.site-glass .ext-install:hover {
+  background: var(--accent-grad);
+  filter: brightness(1.08);
+}
+.site-glass .ext-install.light {
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--ink);
+  box-shadow: none;
+}
+.site-glass .browser-btn {
+  background-color: rgba(255, 255, 255, 0.62);
+}
+.site-glass .browser.detected {
+  border-color: var(--pink);
+  box-shadow:
+    0 0 0 4px rgba(248, 169, 186, 0.35),
+    var(--glass-shadow);
+}
+.site-glass .browser.detected::before {
+  background: var(--pink-ink);
+}
+.site-glass .links a.active {
+  background: rgba(248, 169, 186, 0.3);
+  color: var(--pink-ink);
+}
+/* steps, feature icons and browser marks take the three colours in turn */
+.site-glass .steps li:nth-child(3n + 1)::before {
+  background: var(--blue);
+}
+.site-glass .steps li:nth-child(3n + 2)::before {
+  background: var(--pink-ink);
+}
+.site-glass .steps li:nth-child(3n)::before {
+  background: var(--amber-ink);
+}
+.site-glass .feature:nth-child(3n + 1) .feature-icon,
+.site-glass .browser:nth-child(3n + 1) .browser-mark {
+  background: rgba(123, 179, 225, 0.3);
+  color: var(--blue);
+}
+.site-glass .feature:nth-child(3n + 2) .feature-icon,
+.site-glass .browser:nth-child(3n + 2) .browser-mark {
+  background: rgba(248, 169, 186, 0.38);
+  color: var(--pink-ink);
+}
+.site-glass .feature:nth-child(3n) .feature-icon,
+.site-glass .browser:nth-child(3n) .browser-mark {
+  background: rgba(255, 216, 142, 0.55);
+  color: var(--amber-ink);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .site-glass .steps li,
+  .site-glass .feature,
+  .site-glass .browser,
+  .site-glass .asset,
+  .site-glass .card,
+  .site-glass .hero,
+  .site-glass .panel,
+  .site-glass .side-card,
+  .site-glass .art-row,
+  .site-glass .guide-card,
+  .site-glass .article {
+    background: #fff;
+  }
+}
+@media (max-width: 640px) {
+  .site-glass .article {
+    padding: 20px 16px;
+  }
+}
