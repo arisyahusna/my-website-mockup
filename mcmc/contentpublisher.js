@@ -16,11 +16,18 @@ const channelTags = (ids) => ids.length === CHANNELS.length
   : ids.map((id) => `<span class="chip-tag" title="${esc(CHANNEL[id].label)}">${SHORT[id]}</span>`).join("");
 
 function commit(msg) {
-  saveStore();
+  const saved = saveStore(); // on failure saveStore shows its own warning, so skip the success message
   drawBell();
   $("nav-ready").textContent = ready().length || "";
   $("nav-scheduled").textContent = scheduled().length || "";
-  if (msg) toast(msg);
+  if (msg && saved) toast(msg);
+}
+
+// index.html reads the public-site store that saveStore() → syncSite() writes; saving fails silently when the
+// browser's storage is full, so check the story actually got there
+function checkOnSite(c) {
+  if (siteStories().some((s) => s.id === storyIdOf(c))) return;
+  toast("Diterbitkan, tetapi gagal disimpan ke laman awam — storan pelayar penuh. Buang imej besar di Laman awam, kemudian cuba lagi.");
 }
 
 /* ---------- Lists ---------- */
@@ -194,7 +201,7 @@ function donePanel(c) {
       <p>${esc(c.reporter)}${p.notifiedAt ? ` · ${fmtDT(p.notifiedAt)}` : ""}</p></div></div>
     <div class="action-row">
       ${p.notifiedAt ? "" : `<button class="btn-p" data-act="notify">Maklumkan pelapor</button>`}
-      ${c.article ? `<a class="btn-s" href="../index.html#article/${esc(c.article)}" target="_blank" rel="noopener">Lihat di laman awam ↗</a>` : ""}
+      <a class="btn-s" href="../index.html#article/${esc(storyIdOf(c))}" target="_blank" rel="noopener">Lihat di laman awam ↗</a>
     </div>
   </div>`;
 }
@@ -267,6 +274,7 @@ function bindPublish(c) {
         publishCase(c, { channels: s.channels, notify: s.notify }, me);
         delete pubState[c.id];
         redraw(s.notify ? "Diterbitkan di laman utama — pelapor telah dimaklumkan" : "Diterbitkan di laman utama");
+        checkOnSite(c);
       }, 900);
     });
     act("show-return", () => { $("return-form").hidden = false; $("f-reason").focus(); });
@@ -280,7 +288,7 @@ function bindPublish(c) {
   }
 
   // scheduled
-  act("publish-now", () => { const sc = c.schedule; cancelSchedule(c, me); publishCase(c, { channels: sc.channels, notify: sc.notify }, me); redraw("Diterbitkan sekarang di laman utama"); });
+  act("publish-now", () => { const sc = c.schedule; cancelSchedule(c, me); publishCase(c, { channels: sc.channels, notify: sc.notify }, me); redraw("Diterbitkan sekarang di laman utama"); checkOnSite(c); });
   act("reschedule", () => {
     const t = new Date($("f-resched").value).getTime();
     if (!(t > Date.now() + 5 * MIN)) return toast("Pilih masa sekurang-kurangnya 5 minit dari sekarang");

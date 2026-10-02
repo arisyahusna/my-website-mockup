@@ -37,10 +37,10 @@ const LISTS = [
 let listTab = "pending";
 
 function commit(msg) {
-  saveStore();
+  const saved = saveStore(); // on failure saveStore shows its own warning, so skip the success message
   $("nav-reviews").textContent = LISTS[0][2]().length || "";
   drawBell();
-  if (msg) toast(msg);
+  if (msg && saved) toast(msg);
 }
 
 /* ---------- Review list ---------- */

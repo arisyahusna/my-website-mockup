@@ -315,10 +315,10 @@ function updateNavBadge() {
   $("nav-new").textContent = n || "";
 }
 function commit(msg) {
-  saveStore();
+  const saved = saveStore(); // on failure saveStore shows its own warning, so skip the success message
   drawBell();
   updateNavBadge();
-  if (msg) toast(msg);
+  if (msg && saved) toast(msg);
 }
 
 /* ---------- Dashboard ---------- */

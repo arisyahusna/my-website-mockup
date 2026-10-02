@@ -15,11 +15,11 @@ const LISTS = [
 let listTab = "lead";
 
 function commit(msg) {
-  saveStore();
+  const saved = saveStore(); // on failure saveStore shows its own warning, so skip the success message
   const n = LISTS[0][2]().filter((c) => ["diterima", "pindaan"].includes(assignmentOf(c, AG).status)).length;
   $("nav-cases").textContent = n || "";
   drawBell();
-  if (msg) toast(msg);
+  if (msg && saved) toast(msg);
 }
 
 /* ---------- Case list ---------- */

@@ -18,10 +18,10 @@ function draftState(c) {
 }
 
 function commit(msg) {
-  saveStore();
+  const saved = saveStore(); // on failure saveStore shows its own warning, so skip the success message
   drawBell();
   $("nav-queue").textContent = queue().length || "";
-  if (msg) toast(msg);
+  if (msg && saved) toast(msg);
 }
 
 /* ---------- Queue ---------- */

@@ -104,8 +104,15 @@ function loadStore() {
   return store;
 }
 function saveStore() {
-  try { localStorage.setItem(CASES_KEY, JSON.stringify(store)); } catch (e) { }
-  syncSite();
+  let ok = true;
+  try { localStorage.setItem(CASES_KEY, JSON.stringify(store)); } catch (e) { ok = false; }
+  if (typeof loadSite === "function" && !syncSite()) ok = false;
+  // Browser storage is full (all local file:// pages share one quota): nothing reaches index.html, so say so
+  if (!ok) {
+    console.error("sebenarnya.my: localStorage penuh — perubahan tidak disimpan");
+    if (typeof toast === "function") toast("Storan pelayar penuh — perubahan tidak disimpan dan tidak akan muncul di laman awam. Tekan “Tetapkan semula demo” atau buka melalui Live Server.");
+  }
+  return ok;
 }
 function resetStore() {
   seedStore();
@@ -137,7 +144,7 @@ function syncSite() {
   site.fromCases = store.cases.filter((c) => c.status === "selesai" && c.published && !c.article).map(storyFromCase);
   site.pending = store.cases.filter((c) => c.article && c.status !== "selesai").map((c) => c.article);
   site.liveAt = Object.fromEntries(store.cases.filter((c) => c.article && c.published && c.published.live).map((c) => [c.article, c.published.at]));
-  saveSite(site);
+  return saveSite(site);
 }
 const getCase = (id) => store.cases.find((c) => c.id === id);
 
@@ -435,6 +442,13 @@ function publishCase(c, opts = {}, actor = PUBLISHER) {
   // live: published from the portal rather than by the demo seed (moves its story to the top of index.html)
   c.published = { at: now(), by: actor.name, channels, scheduled: !!opts.scheduled, notifiedAt: null, live: !_seeding };
   c.schedule = null;
+  // A fresh publish puts the story back on the public site even if it was hidden or deleted there earlier
+  if (typeof loadSite === "function") {
+    const site = loadSite(), id = storyIdOf(c);
+    site.hidden = site.hidden.filter((x) => x !== id);
+    site.deleted = site.deleted.filter((x) => x !== id);
+    saveSite(site);
+  }
   logAction(c, actor, `Diterbitkan${opts.scheduled ? " mengikut jadual" : ""} di ${channelNames(channels)}. Kandungan boleh kongsi dijana; pangkalan data sambungan pelayar dan chatbot dikemas kini.`, "Terbit");
   setStatus(c, "selesai", actor);
   changeCaseType(c, "Selesai", actor, "diterbitkan");
