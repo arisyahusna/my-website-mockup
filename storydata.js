@@ -10,7 +10,19 @@
 const SITE_KEY = "sbn-site-v1";
 const LABEL = { false: "Palsu", mislead: "Mengelirukan", true: "Benar" };
 // Same list as the category bar on index.html (minus "Utama", which shows everything)
-const PUBLIC_CATS = ["Bencana", "Ekonomi", "Keselamatan", "Pendidikan", "Pengangkutan", "Urus Tadbir", "Pilihanraya", "Agama", "Jenayah", "Kesihatan", "Kepenggunaan"];
+const PUBLIC_CATS = [
+  "Bencana",
+  "Ekonomi",
+  "Keselamatan",
+  "Pendidikan",
+  "Pengangkutan",
+  "Urus Tadbir",
+  "Pilihanraya",
+  "Agama",
+  "Jenayah",
+  "Kesihatan",
+  "Kepenggunaan",
+];
 
 // Sample content — replace with real data from your CMS/API
 const SEED_STORIES = [
@@ -21,7 +33,7 @@ const SEED_STORIES = [
       'Mesej tular WhatsApp tawar "bantuan digital" RM500 ialah penipuan pancingan data',
     cat: "Jenayah",
     hrs: 0.3,
-    img: "hero",
+    img: "image/whatsapp scam.png",
     split: [92, 6, 2],
     n: 24,
     claim:
@@ -36,7 +48,7 @@ const SEED_STORIES = [
       "Foto lebuh raya dinaiki air diambil pada 2021, bukan ribut minggu ini",
     cat: "Bencana",
     hrs: 3,
-    img: "flood",
+    img: "image/banjir.jpg",
     split: [88, 10, 2],
     n: 17,
     claim:
@@ -51,7 +63,7 @@ const SEED_STORIES = [
       "Dakwaan harga petrol naik dua kali ganda bulan depan tidak menyatakan konteks penting",
     cat: "Ekonomi",
     hrs: 20,
-    img: "fuel",
+    img: "image/petrol.jpg",
     split: [20, 70, 10],
     n: 21,
     claim: "Harga petrol akan naik dua kali ganda mulai bulan depan.",
@@ -65,7 +77,7 @@ const SEED_STORIES = [
       "Benar, penggal persekolahan baharu bermula seminggu lebih awal di beberapa negeri",
     cat: "Pendidikan",
     hrs: 30,
-    img: "school",
+    img: "image/sekolah.jpg",
     split: [3, 7, 90],
     n: 12,
     claim:
@@ -123,7 +135,7 @@ const SEED_STORIES = [
       "Bacaan jerebu di beberapa kawasan semenanjung memang mencapai tahap tidak sihat",
     cat: "Kesihatan",
     hrs: 290,
-    img: "haze",
+    img: "image/jerebu.png",
     split: [2, 8, 90],
     n: 19,
     claim:
@@ -138,7 +150,7 @@ const SEED_STORIES = [
       "Notis tular 'caj bank baharu' yang tersebar di Telegram adalah rekaan",
     cat: "Kepenggunaan",
     hrs: 480,
-    img: "bank",
+    img: "image/telegram.png",
     split: [90, 8, 2],
     n: 11,
     claim:
@@ -167,7 +179,11 @@ function agoText(t) {
   if (h < 24) return `${Math.round(h)} jam lalu`;
   if (h < 48) return "Semalam";
   if (h < 24 * 7) return `${Math.floor(h / 24)} hari lalu`;
-  return new Date(t).toLocaleDateString("ms-MY", { day: "numeric", month: "short", year: "numeric" });
+  return new Date(t).toLocaleDateString("ms-MY", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 // Most-searched claims (sidebar); entries whose story is not on the site are skipped
@@ -219,33 +235,73 @@ const SEED_HOT = [
 /* ---------- Public-site store ---------- */
 function loadSite() {
   let s = null;
-  try { s = JSON.parse(localStorage.getItem(SITE_KEY)); } catch (e) { }
-  return Object.assign({ fromCases: [], pending: [], liveAt: {}, edits: {}, hidden: [], deleted: [] }, s || {});
+  try {
+    s = JSON.parse(localStorage.getItem(SITE_KEY));
+  } catch (e) {}
+  return Object.assign(
+    {
+      fromCases: [],
+      pending: [],
+      liveAt: {},
+      edits: {},
+      hidden: [],
+      deleted: [],
+    },
+    s || {},
+  );
 }
 function saveSite(site) {
-  try { localStorage.setItem(SITE_KEY, JSON.stringify(site)); return true; } catch (e) { return false; }
+  try {
+    localStorage.setItem(SITE_KEY, JSON.stringify(site));
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 function resetSite() {
   const s = loadSite();
-  saveSite({ fromCases: s.fromCases, pending: s.pending, liveAt: s.liveAt, edits: {}, hidden: [], deleted: [] });
+  saveSite({
+    fromCases: s.fromCases,
+    pending: s.pending,
+    liveAt: s.liveAt,
+    edits: {},
+    hidden: [],
+    deleted: [],
+  });
 }
 
 // Text from the store goes into the page as HTML, so markup is stripped
 const plainText = (v) => String(v ?? "").replace(/[<>]/g, "");
-const safeImg = (v) => (/^(data:image\/|https?:\/\/|image\/)/.test(v || "") ? String(v).replace(/"/g, "%22") : "");
+const safeImg = (v) =>
+  /^(data:image\/|https?:\/\/|image\/)/.test(v || "")
+    ? String(v).replace(/"/g, "%22")
+    : "";
 
 // Newest first. { all: true } also returns hidden stories (for the Content Publisher)
 function siteStories(opts = {}) {
-  const site = loadSite(), t = Date.now();
-  const seed = SEED_STORIES.filter((s) => !site.pending.includes(s.id))
-    .map((s) => ({ ...s, at: site.liveAt[s.id] || t - s.hrs * 3600e3, origin: "seed" }));
+  const site = loadSite(),
+    t = Date.now();
+  const seed = SEED_STORIES.filter((s) => !site.pending.includes(s.id)).map(
+    (s) => ({
+      ...s,
+      at: site.liveAt[s.id] || t - s.hrs * 3600e3,
+      origin: "seed",
+    }),
+  );
   const fromCases = site.fromCases.map((s) => ({ ...s, origin: "case" }));
   return [...fromCases, ...seed]
     .filter((s) => !site.deleted.includes(s.id))
     .map((s) => {
       const e = site.edits[s.id] || {};
-      const out = { ...s, ...e, hidden: site.hidden.includes(s.id), edited: !!site.edits[s.id] };
-      ["title", "cat", "claim", "summary", "body"].forEach((k) => (out[k] = plainText(out[k])));
+      const out = {
+        ...s,
+        ...e,
+        hidden: site.hidden.includes(s.id),
+        edited: !!site.edits[s.id],
+      };
+      ["title", "cat", "claim", "summary", "body"].forEach(
+        (k) => (out[k] = plainText(out[k])),
+      );
       out.v = LABEL[out.v] ? out.v : "false";
       out.imgSrc = safeImg(out.imgSrc);
       out.ago = agoText(out.at);
@@ -255,5 +311,21 @@ function siteStories(opts = {}) {
     .sort((a, b) => b.at - a.at);
 }
 
-// Main image: the publisher's upload, else a placeholder photo
-const storyImg = (s, w, h) => s.imgSrc || `https://picsum.photos/seed/sbn-${encodeURIComponent(s.img)}/${w}/${h}`;
+// image/… paths are relative to this file, so they also work on the staff portals one folder down
+const SITE_ROOT = document.currentScript
+  ? new URL(".", document.currentScript.src).href
+  : "";
+
+// Shown when a story has no picture yet: a plain grey tile
+const NO_IMG =
+  "data:image/svg+xml," +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 10"><rect width="16" height="10" fill="#e5e7eb"/></svg>',
+  );
+
+// Main image: the publisher's upload, else the story's `img` (an image/… file or link), else the grey tile
+const storyImg = (s) => {
+  const src = s.imgSrc || safeImg(s.img);
+  if (!src) return NO_IMG;
+  return src.startsWith("image/") ? SITE_ROOT + src.replace(/ /g, "%20") : src;
+};

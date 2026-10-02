@@ -1883,6 +1883,47 @@ textarea.ctl {
   .admin-body {
     background: #fff;
   }
+  /* Charts below the fold have not played their entrance animation yet; print them finished.
+     .admin-body outranks the .viz-anim rules further down this file. */
+  .admin-body .viz-anim .series-line {
+    stroke-dashoffset: 0;
+  }
+  .admin-body .viz-anim .series-end,
+  .admin-body .viz-anim .dlabel,
+  .admin-body .viz-anim .vlabel,
+  .admin-body .viz-anim .cell {
+    opacity: 1;
+  }
+  .admin-body .viz-anim .series-area {
+    opacity: 0.1;
+  }
+  .admin-body .viz-anim .bar,
+  .admin-body .viz-anim .cell {
+    transform: none;
+  }
+  .admin-body .viz-anim * {
+    transition: none !important;
+  }
+  /* Heatmap cells, legend ramps and status badges are coloured by background, which browsers
+     drop when printing unless told to keep it */
+  .admin-body,
+  .admin-body * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Glass blur and the fixed colour layer make browsers stop printing after the first page */
+  .admin-body::before {
+    display: none;
+  }
+  .admin-body * {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  .card,
+  .kpi,
+  .mini-kpi {
+    break-inside: avoid;
+  }
 }
 
 /* ---------- Case types (cases.js CASE_TYPES) ---------- */

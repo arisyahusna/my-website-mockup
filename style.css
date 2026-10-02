@@ -11,8 +11,7 @@
   --false: #e63f7a;
   --mislead: #f5a901;
   --true: #0075c9;
-  --font-display:
-    "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-body: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
   --radius: 10px;
 }
@@ -52,6 +51,14 @@ button {
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 24px;
+}
+
+.nav-link {
+  text-decoration: underline;
+}
+
+.nav-link:hover {
+  text-decoration: none;
 }
 
 /* ---------- Top strip ---------- */
@@ -4455,7 +4462,11 @@ footer nav a:hover {
   place-items: center;
   height: 150px;
   background:
-    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.7), transparent 55%),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(255, 255, 255, 0.7),
+      transparent 55%
+    ),
     var(--tone-bg);
   color: var(--tone);
 }
@@ -4786,8 +4797,7 @@ footer nav a:hover {
   --glass-strong: rgba(255, 255, 255, 0.88);
   --glass-line: rgba(255, 255, 255, 0.8);
   --glass-shadow:
-    0 10px 30px rgba(28, 39, 76, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    0 10px 30px rgba(28, 39, 76, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.7);
   --glass-blur: blur(18px) saturate(160%);
   --accent-grad: linear-gradient(135deg, var(--blue), var(--pink-ink));
   position: relative;
@@ -4800,10 +4810,26 @@ footer nav a:hover {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(40rem 32rem at 4% 0%, rgba(123, 179, 225, 0.55), transparent 70%),
-    radial-gradient(36rem 30rem at 100% 12%, rgba(248, 169, 186, 0.5), transparent 70%),
-    radial-gradient(44rem 34rem at 62% 106%, rgba(255, 216, 142, 0.55), transparent 70%),
-    radial-gradient(30rem 26rem at 30% 60%, rgba(248, 169, 186, 0.18), transparent 70%);
+    radial-gradient(
+      40rem 32rem at 4% 0%,
+      rgba(123, 179, 225, 0.55),
+      transparent 70%
+    ),
+    radial-gradient(
+      36rem 30rem at 100% 12%,
+      rgba(248, 169, 186, 0.5),
+      transparent 70%
+    ),
+    radial-gradient(
+      44rem 34rem at 62% 106%,
+      rgba(255, 216, 142, 0.55),
+      transparent 70%
+    ),
+    radial-gradient(
+      30rem 26rem at 30% 60%,
+      rgba(248, 169, 186, 0.18),
+      transparent 70%
+    );
 }
 
 /* ---------- Glass surfaces ---------- */
@@ -4867,7 +4893,11 @@ footer nav a:hover {
   border-color: var(--glass-line);
 }
 .site-glass .ext-hero {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.45),
+    rgba(255, 255, 255, 0)
+  );
   border-bottom: 1px solid var(--glass-line);
 }
 .site-glass .search input,
@@ -4975,7 +5005,11 @@ footer nav a:hover {
   --tone-bg: rgba(107, 63, 184, 0.12);
 }
 .site-glass .article-foot {
-  background: linear-gradient(135deg, rgba(123, 179, 225, 0.22), rgba(248, 169, 186, 0.22));
+  background: linear-gradient(
+    135deg,
+    rgba(123, 179, 225, 0.22),
+    rgba(248, 169, 186, 0.22)
+  );
 }
 /* AIFA chatbot */
 .site-glass .aifa-head {
@@ -5032,7 +5066,11 @@ footer nav a:hover {
   border-left-color: var(--glass-line);
 }
 .site-glass .asset-bg.brand {
-  background: linear-gradient(135deg, rgba(123, 179, 225, 0.45), rgba(248, 169, 186, 0.45));
+  background: linear-gradient(
+    135deg,
+    rgba(123, 179, 225, 0.45),
+    rgba(248, 169, 186, 0.45)
+  );
   border-left-color: var(--glass-line);
 }
 .site-glass .dl-btn {
@@ -5131,7 +5169,9 @@ footer nav a:hover {
   color: var(--amber-ink);
 }
 
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
   .site-glass .steps li,
   .site-glass .feature,
   .site-glass .browser,
